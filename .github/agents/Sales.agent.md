@@ -105,103 +105,91 @@ Activate the Sales Agent when the conversation matches ANY of:
 | Demo Management | Sales Agent/.agents/skills/demo-management/SKILL.md | Prepare and deliver tailored product demos with prop-firm scenarios |
 | Proposal Generation | Sales Agent/.agents/skills/proposal-generation/SKILL.md | Create tier recommendations, discount structures, and checkout links |
 
-## Infrastructure Access — How to Execute
+## Infrastructure Access — How To Execute
 
-You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+You have FULL access to the workspace filesystem and a complete Python API layer. **You are NOT limited to conversation-only responses.** When asked to qualify leads, schedule calls, or manage pipeline, **execute it** using the tools below.
 
-**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
-**Python interpreter**: `.venv\Scripts\python.exe`  
-**All API keys are loaded from `.env` automatically** — never hardcode secrets.
-
-### Quick-Start Pattern
-```bash
-# One-liner from workspace root:
-.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
-```
-
-### Available API Modules
-
-**Notion** (deal tracking, sales playbook):
-```python
-from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
-# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
-# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
-# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
-# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
-# financial_reports, meeting_notes, knowledge_base, growth_experiments
-
-results = query_db('pipeline_deals', filter={"property": "Stage", "select": {"equals": "Demo Scheduled"}})
-results = query_db('leads', filter={"property": "Status", "status": {"equals": "Qualified"}})
-log_task(agent="Sales", task="lead-qualification", status="complete", output_summary="Qualified 12 leads")
-```
-
-**Supabase** (user profiles, subscription status):
-```python
-from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
-users = query_users(limit=10)
-sub = get_subscription(user_id)
-user = get_user_by_email("trader@example.com")
-```
-
-**Creem** (checkout links, subscription management):
-```python
-from shared.creem_client import list_products, list_subscriptions, list_customers, create_checkout_link
-products = list_products()
-subs = list_subscriptions()
-link = create_checkout_link(product_id, success_url="https://hedge-edge.com/success")
-```
-
-**Cal.com** (demo scheduling, availability):
-```python
-from shared.calcom_client import list_event_types, list_bookings, get_availability
-bookings = list_bookings(status="upcoming")
-```
-
-**Google Sheets** (CRM data, lead tracking):
-```python
-from shared.gsheets_client import read_range, write_range, append_rows
-data = read_range(spreadsheet_id, "Sheet1!A1:D10")
-```
-
-**Discord** (lead-qualifying signals, DM outreach):
-```python
-from shared.discord_client import send_message, send_embed, get_guild_info, get_guild_channels, post_webhook
-send_message(channel_id, "Follow-up message to prospect")
-info = get_guild_info("1101229154386579468")
-```
-
-**Access Guard** (secure agent sessions):
-```python
-from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
-with AgentSession("Sales") as session:
-    results = session.query_db('pipeline_deals')
-```
-
-### Running Your Execution Scripts
-```bash
-# List available tasks:
-.venv\Scripts\python.exe "Sales Agent\run.py" --list-tasks
-
-# Run a specific task:
-.venv\Scripts\python.exe "Sales Agent\run.py" --task task-name --action action-name
-```
-
-### Reading Context Files
-You can read any file in the workspace using the `context` tool, including:
+### 1. Reading Workspace Files
 - `Context/hedge-edge-business-context.md` — full business context
-- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
-- Any skill's SKILL.md for detailed instructions
+- `Context/platform-filtering-acquisition-plan.md` — target segments & acquisition plan
+- `.env` — all API credentials (NEVER hardcode keys)
 
-## API Keys & Platforms
+### 2. Python API Modules (shared/)
+Run scripts with: `.venv/Scripts/python.exe <script_path>`
 
-| Platform | Env Variable(s) | Usage |
-|---|---|---|
-| Cal.com | CAL_API_KEY | Schedule demo and sales calls; check availability; send reminders |
-| Google Sheets | GOOGLE_SHEETS_API_KEY | Read/write CRM data  leads, deals, interaction logs |
-| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger automation workflows  lead routing, follow-up sequences, CRM sync |
-| Notion | NOTION_API_KEY | Deal-tracking databases, sales playbook, objection-handling docs |
-| Supabase | SUPABASE_URL, SUPABASE_KEY | Query user profiles, subscription status, usage metrics, broker linkage |
-| Creem.io | CREEM_API_KEY | Generate checkout links per tier, verify payment status, manage subscriptions |
-| Discord Bot | DISCORD_BOT_TOKEN | Monitor lead-qualifying signals in community channels, DM outreach |
-| Zoom | ZOOM_API_KEY | Create meeting links for sales/demo calls |
-| Google Calendar | GOOGLE_CALENDAR_KEY | Check team availability, block demo slots, avoid double-booking |
+#### Notion (Central Database)
+```python
+from shared.notion_client import add_row, query_db, update_row, log_task, DATABASES
+# Write: leads_crm, demo_log, proposals
+# Read: mrr_tracker, feedback
+# add_row("leads_crm", {"Name": "John", "Email": "john@example.com", "Source": "Discord", "Stage": "MQL"})
+# add_row("demo_log", {"Lead": "John", "Date": "2026-02-18", "Platform": "Zoom", "Status": "Scheduled"})
+# query_db("leads_crm", filter={"property": "Stage", "select": {"equals": "SQL"}})
+```
+
+#### Scheduling (Cal.com)
+```python
+from shared.calcom_client import list_event_types, list_bookings, get_booking, cancel_booking, get_availability
+# list_bookings(status="upcoming")  # See all scheduled demos
+# get_availability(event_type_id=123, start_time="2026-02-18", end_time="2026-02-25")
+```
+
+#### CRM Data (Google Sheets)
+```python
+from shared.gsheets_client import read_range, append_rows, write_range
+# read_range("SPREADSHEET_ID", "Pipeline!A:G")
+# append_rows("SPREADSHEET_ID", "Pipeline!A:A", [["John", "john@example.com", "SQL", "2026-02-18"]])
+```
+
+#### Payment & Subscription Data
+```python
+from shared.creem_client import list_subscriptions, list_customers, create_checkout_link  # read
+from shared.supabase_client import query_users, get_user_by_email, get_subscription  # read
+```
+
+#### Communication
+```python
+from shared.resend_client import send_email  # write (follow-up emails)
+from shared.discord_client import send_message, send_embed  # read (via Community Manager)
+from shared.shortio_client import create_link, get_link_stats  # write (trackable proposal links)
+```
+
+#### Access Control
+```python
+from shared.access_guard import AgentSession
+with AgentSession("sales") as session:
+    session.add_row("leads_crm", {...})  # ✅ write
+    session.add_row("demo_log", {...})  # ✅ write
+    session.query_db("mrr_tracker")  # ✅ read
+```
+
+### 3. Execution Scripts
+```bash
+.venv/Scripts/python.exe "Sales Agent/run.py" --task lead-qualify --action score-lead --lead-email "x@y.com"
+.venv/Scripts/python.exe "Sales Agent/run.py" --task pipeline --action pipeline-view
+.venv/Scripts/python.exe "Sales Agent/run.py" --task call-schedule --action upcoming-calls
+.venv/Scripts/python.exe "Sales Agent/run.py" --task crm-sync --action sync-from-notion
+.venv/Scripts/python.exe "Sales Agent/run.py" --task demo-track --action list-demos
+.venv/Scripts/python.exe "Sales Agent/run.py" --task proposal --action generate
+```
+
+### 4. Notion Database Access
+**Write**: leads_crm, demo_log, proposals
+**Read**: mrr_tracker, feedback
+
+### 5. API Permissions (from api_registry.py)
+| API | Access Level |
+|-----|-------------|
+| Notion | Full |
+| Cal.com | Full |
+| Google Sheets | Write |
+| Short.io | Write |
+| Resend | Write |
+| Supabase | Read |
+| Creem.io | Read |
+
+### CRITICAL RULES
+1. **NEVER hardcode API keys** — all credentials are in `.env`, loaded automatically
+2. **ALWAYS execute** — when asked to qualify leads or check pipeline, RUN the scripts and query the APIs
+3. **Log every action** — call `log_task()` after completing any operation
+4. **BANT framework** — always use Budget/Authority/Need/Timeline for lead qualification

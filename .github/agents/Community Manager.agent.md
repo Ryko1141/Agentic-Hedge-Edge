@@ -106,90 +106,64 @@ etention-engagement/SKILL.md | Churn prevention, re-engagement campaigns, engage
 | Community Events | community-events/SKILL.md | Hedge Lab calls, AMAs, trading challenges, milestone celebrations |
 | Support Triage | support-triage/SKILL.md | Issue classification, SLA management, ticket routing, FAQ deflection |
 
-## Infrastructure Access — How to Execute
+## Infrastructure Access — How To Execute
 
-You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+You have FULL access to the workspace filesystem and a complete Python API layer. **You are NOT limited to conversation-only responses.** When asked to manage Discord, onboard users, or handle support tickets, **execute it** using the tools below.
 
-**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
-**Python interpreter**: `.venv\Scripts\python.exe`  
+**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`
+**Python interpreter**: `.venv\Scripts\python.exe`
 **All API keys are loaded from `.env` automatically** — never hardcode secrets.
 
 ### Quick-Start Pattern
 ```bash
-# One-liner from workspace root:
-.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
+.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('feedback'))"
 ```
 
-### Available API Modules
+### Your Notion Databases
 
-**Notion** (community knowledge base, feedback databases):
+| DB Key | Purpose | Access |
+|--------|---------|--------|
+| `feedback` | User feedback & feature requests | **write** |
+| `support_tickets` | Support ticket tracking | **write** |
+| `community_events` | Events (Hedge Labs, AMAs, challenges) | **write** |
+| `release_log` | Product releases | read |
+| `content_calendar` | Content schedule | read |
+
 ```python
-from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
-# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
-# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
-# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
-# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
-# financial_reports, meeting_notes, knowledge_base, growth_experiments
+from shared.notion_client import query_db, add_row, update_row, log_task
 
+# Query upcoming events
 results = query_db('community_events', filter={"property": "Status", "status": {"equals": "Upcoming"}})
-results = query_db('community_feedback')
+# Log user feedback
+add_row('feedback', {"Name": {"title": [{"text": {"content": "Feature request: MT4 support"}}]}})
+# Check open tickets
 results = query_db('support_tickets', filter={"property": "Status", "status": {"equals": "Open"}})
+# Log task completion
 log_task(agent="Community Manager", task="onboarding", status="complete", output_summary="Onboarded 10 new users")
 ```
 
-**Discord** (server management, engagement, announcements):
-```python
-from shared.discord_client import send_message, send_embed, get_guild_info, get_guild_channels, post_webhook
-send_message(channel_id, "Welcome to Hedge Edge!")
-send_embed(channel_id, "Title", "Description", color=0x00ff00, fields=[{"name": "K", "value": "V"}])
-info = get_guild_info("1101229154386579468")  # Hedge Edge guild
-channels = get_guild_channels("1101229154386579468")
-```
+### Your API Modules
 
-**Supabase** (user subscription status, onboarding tracking):
-```python
-from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
-users = query_users(limit=10)
-sub = get_subscription(user_id)
-count = count_active_subs()
-```
+| Module | Import | Access | Purpose |
+|--------|--------|--------|---------|
+| Notion | `from shared.notion_client import *` | full | Community databases (see table above) |
+| Discord | `from shared.discord_client import send_message, send_embed, get_guild_info, get_guild_channels, post_webhook` | **full** | Server management, moderation, announcements, welcome flows |
+| Resend | `from shared.resend_client import send_email, send_batch, list_audiences, add_contact, list_contacts, remove_contact, get_contact, update_contact` | write | Welcome emails, community notifications |
+| Cal.com | `from shared.calcom_client import list_event_types, list_bookings, get_availability` | read | Check event schedules |
+| Supabase | `from shared.supabase_client import query_users, get_subscription, count_active_subs, get_user_by_email` | read | User subscription status, onboarding tracking |
+| Access Guard | `from shared.access_guard import AgentSession` | — | Secure agent sessions |
 
-**Resend** (welcome emails, community notifications):
-```python
-from shared.resend_client import send_email, send_batch, list_audiences, add_contact, list_contacts
-send_email(to="user@example.com", subject="Welcome to the Community", html="<h1>Welcome!</h1>", tags=[{"name":"campaign","value":"onboarding"}])
-```
-
-**Access Guard** (secure agent sessions):
-```python
-from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
-with AgentSession("Community Manager") as session:
-    results = session.query_db('community_feedback')
-```
+**Discord Guild ID**: `1101229154386579468`
 
 ### Running Your Execution Scripts
 ```bash
-# List available tasks:
 .venv\Scripts\python.exe "Community Manager Agent\run.py" --list-tasks
-
-# Run a specific task:
 .venv\Scripts\python.exe "Community Manager Agent\run.py" --task task-name --action action-name
 ```
 
-### Reading Context Files
-You can read any file in the workspace using the `context` tool, including:
-- `Context/hedge-edge-business-context.md` — full business context
-- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
-- Any skill's SKILL.md for detailed instructions
-
-## API Keys & Platforms
-
-| Platform | Env Variable(s) | Purpose |
-|---|---|---|
-| Discord Bot API | DISCORD_BOT_TOKEN | Server management, role assignment, auto-moderation, welcome flows, message monitoring |
-| Discord Webhook | DISCORD_WEBHOOK_URL | Automated announcements, milestone notifications, event reminders |
-| Supabase | SUPABASE_URL, SUPABASE_KEY | User subscription status, onboarding stage tracking, engagement scores, churn flags |
-| Notion API | NOTION_API_KEY | Community knowledge base, FAQ pages, feedback databases, event planning docs |
-| local automation scripts (Railway) | RAILWAY_TOKEN | Automation workflows  welcome sequences, feedback triggers, churn alert pipelines |
-| Typeform / Google Forms | FORM_API_KEY | Surveys (onboarding NPS, feature prioritization, event feedback) |
-| Crisp / Intercom | SUPPORT_API_KEY | Help desk integration, ticket management, live chat (future implementation) |
+### Critical Rules
+1. **Never hardcode API keys** — all credentials load from `.env` via `dotenv`
+2. **Use Access Guard** for any multi-step operation: `with AgentSession("Community Manager") as s:`
+3. **Log every completed task** via `log_task(agent="Community Manager", ...)`
+4. **Read context** from `Context/hedge-edge-business-context.md` and `shared/notion_client.py` for DATABASES dict
+5. **Discord is your primary channel** — you have FULL access (messages, channels, roles, moderation)

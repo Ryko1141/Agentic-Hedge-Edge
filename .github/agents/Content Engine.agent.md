@@ -85,91 +85,63 @@ This agent has the following skills:
 | `content-scheduling` | Cross-platform content calendar management, batch scheduling, and editorial workflow via Notion |
 | `video-production` | Video scripting, screen recording workflows, FFmpeg editing, thumbnail design via Canva, and production pipeline management |
 
-## Infrastructure Access — How to Execute
+## Infrastructure Access — How To Execute
 
-You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+You have FULL access to the workspace filesystem and a complete Python API layer. **You are NOT limited to conversation-only responses.** When asked to schedule content, publish posts, or manage the video pipeline, **execute it** using the tools below.
 
-**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
-**Python interpreter**: `.venv\Scripts\python.exe`  
+**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`
+**Python interpreter**: `.venv\Scripts\python.exe`
 **All API keys are loaded from `.env` automatically** — never hardcode secrets.
 
 ### Quick-Start Pattern
 ```bash
-# One-liner from workspace root:
-.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
+.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('content_calendar'))"
 ```
 
-### Available API Modules
+### Your Notion Databases
 
-**Notion** (content calendar, editorial workflow):
+| DB Key | Purpose | Access |
+|--------|---------|--------|
+| `content_calendar` | Editorial calendar & content tracking | **write** |
+| `video_pipeline` | Video production pipeline | **write** |
+| `seo_keywords` | SEO keyword research | read |
+| `campaigns` | Marketing campaigns | read |
+| `release_log` | Product releases (for content ideas) | read |
+
 ```python
-from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
-# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
-# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
-# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
-# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
-# financial_reports, meeting_notes, knowledge_base, growth_experiments
+from shared.notion_client import query_db, add_row, update_row, log_task
 
+# Query content calendar
 results = query_db('content_calendar', filter={"property": "Status", "status": {"equals": "Draft"}})
+# Add new content idea
 add_row('content_calendar', {"Name": {"title": [{"text": {"content": "New video idea"}}]}, "Status": {"status": {"name": "Idea"}}})
+# Track video pipeline
+results = query_db('video_pipeline')
+# Log task completion
 log_task(agent="Content Engine", task="video-production", status="complete", output_summary="Published 3 YouTube videos")
 ```
 
-**Instagram** (reels, carousels, engagement):
-```python
-from shared.instagram_client import get_profile, list_media, get_insights, publish_post
-profile = get_profile()
-```
+### Your API Modules
 
-**LinkedIn** (thought leadership, articles):
-```python
-from shared.linkedin_client import get_profile, create_text_post, create_article_post
-create_text_post("Check out our latest hedging guide!")
-```
-
-**YouTube** (video management, analytics):
-```python
-from shared.youtube_client import get_channel_stats, list_videos, get_video_stats
-stats = get_channel_stats()
-```
-
-**Supabase** (user data for content targeting):
-```python
-from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
-users = query_users(limit=10)
-count = count_active_subs()
-```
-
-**Access Guard** (secure agent sessions):
-```python
-from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
-with AgentSession("Content Engine") as session:
-    results = session.query_db('content_calendar')
-```
+| Module | Import | Access | Purpose |
+|--------|--------|--------|---------|
+| Notion | `from shared.notion_client import *` | full | Content databases (see table above) |
+| YouTube | `from shared.youtube_client import get_channel_stats, list_videos, get_video_stats, search_videos` | full | Video uploads, analytics, SEO |
+| Instagram | `from shared.instagram_client import get_profile, list_media, get_insights, publish_post, get_stories, get_hashtag_media` | full | Reels, carousels, stories |
+| LinkedIn | `from shared.linkedin_client import get_profile, create_text_post, create_article_post, create_image_post, get_post_stats` | full | Articles, thought leadership |
+| Short.io | `from shared.shortio_client import create_link, list_links, get_link_stats, update_link, delete_link` | write | Branded short links for content distribution |
+| Discord | `from shared.discord_client import get_guild_channels, get_guild_info` | read | Read feedback for content ideas |
+| Supabase | `from shared.supabase_client import query_users, count_active_subs` | read | User data for content targeting |
+| Access Guard | `from shared.access_guard import AgentSession` | — | Secure agent sessions |
 
 ### Running Your Execution Scripts
 ```bash
-# List available tasks:
 .venv\Scripts\python.exe "Content Engine Agent\run.py" --list-tasks
-
-# Run a specific task:
 .venv\Scripts\python.exe "Content Engine Agent\run.py" --task task-name --action action-name
 ```
 
-### Reading Context Files
-You can read any file in the workspace using the `context` tool, including:
-- `Context/hedge-edge-business-context.md` — full business context
-- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
-- Any skill's SKILL.md for detailed instructions
-
-## API Keys & Platforms
-
-| Platform | API / Tool | Env Variable | Purpose |
-|----------|-----------|--------------|---------|
-| YouTube | YouTube Data API v3 | `YOUTUBE_API_KEY` | Video uploads, analytics retrieval, comment management, channel optimization |
-| Instagram | Instagram Graph API | `INSTAGRAM_ACCESS_TOKEN` | Reels/post publishing, story management, engagement tracking |
-| LinkedIn | LinkedIn API | `LINKEDIN_ACCESS_TOKEN` | Article and post publishing, engagement analytics |
-| Canva | Canva API | `CANVA_API_KEY` | Thumbnail generation, social media graphic design, brand template management |
-| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Content writing assistance, script generation, caption optimization |
-| FFmpeg | FFmpeg CLI | N/A (local install) | Video editing, format conversion, clip extraction, thumbnail frame capture |
-| Notion | Notion API | `NOTION_API_KEY` | Content calendar management, editorial workflow, idea backlog |
+### Critical Rules
+1. **Never hardcode API keys** — all credentials load from `.env` via `dotenv`
+2. **Use Access Guard** for any multi-step operation: `with AgentSession("Content Engine") as s:`
+3. **Log every completed task** via `log_task(agent="Content Engine", ...)`
+4. **Read context** from `Context/hedge-edge-business-context.md` and `shared/notion_client.py` for DATABASES dict

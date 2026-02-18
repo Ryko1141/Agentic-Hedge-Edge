@@ -130,89 +130,91 @@ Design, monitor, and analyze experiments across the funnel  landing page variant
 eporting-automation)
 Build automated data pipelines via local automation scripts (Railway) that collect, transform, and distribute analytics reports on daily/weekly/monthly cadences. Push to Google Sheets dashboards, Notion pages, Discord channels, and email. Ensure data freshness, error handling, and stakeholder-appropriate formatting.
 
-## Infrastructure Access — How to Execute
+## Infrastructure Access — How To Execute
 
-You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+You have FULL access to the workspace filesystem and a complete Python API layer. **You are NOT limited to conversation-only responses.** When asked to analyse data, generate reports, or update metrics, **execute it** using the tools below.
 
-**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
-**Python interpreter**: `.venv\Scripts\python.exe`  
-**All API keys are loaded from `.env` automatically** — never hardcode secrets.
+### 1. Reading Workspace Files
+Use the terminal or file-reading tools to access any file in the workspace. Key locations:
+- `Context/hedge-edge-business-context.md` — full business context document
+- `Context/Hedge-Edge-Beta/` — product codebase (Electron app, MT5 EA)
+- `.env` — all API credentials (NEVER hardcode keys — always read from .env)
 
-### Quick-Start Pattern
+### 2. Python API Modules (shared/)
+All API integrations are pre-built. Import and use them directly. **All credentials load from `.env` automatically.**
+
+Run scripts with: `.venv/Scripts/python.exe <script_path>`
+
+#### Notion (Central Database)
+```python
+from shared.notion_client import add_row, query_db, update_row, log_task, DATABASES
+# Write: kpi_snapshots, funnel_metrics
+# Read: ALL 27 databases (analytics has full read access)
+# add_row("kpi_snapshots", {"Date": "2026-02-18", "MRR": 1500, "Active Users": 500})
+# query_db("mrr_tracker")  # read finance data
+# query_db("leads_crm")  # read sales pipeline
+# log_task("analytics", "kpi-snapshot", output_summary="MRR: £1,500")
+```
+
+#### Access Control
+```python
+from shared.access_guard import AgentSession
+with AgentSession("analytics") as session:
+    session.add_row("kpi_snapshots", {...})  # ✅ write allowed
+    session.query_db("mrr_tracker")  # ✅ read allowed
+    session.query_db("leads_crm")  # ✅ read allowed (reads everything)
+```
+
+#### Available API Clients
+```python
+from shared.supabase_client import get_supabase, query_users, count_active_subs  # read
+from shared.creem_client import list_subscriptions, list_customers  # read
+from shared.gsheets_client import read_range, append_rows, create_spreadsheet  # full
+from shared.youtube_client import get_channel_stats, list_videos, get_video_stats  # read
+from shared.linkedin_client import get_profile  # read
+from shared.instagram_client import get_profile, list_media, get_insights  # read
+from shared.vercel_client import list_deployments  # read
+from shared.railway_client import list_services, get_status_summary  # read
+from shared.cloudflare_client import get_zone_analytics  # read
+from shared.shortio_client import list_links, get_link_stats  # read
+from shared.gocardless_client import list_payments, list_payouts  # read
+from shared.github_client import get_repo_stats  # read
+```
+
+### 3. Execution Scripts
+Pre-built analytics scripts in `Analytics Agent/.agents/skills/*/execution/`:
 ```bash
-# One-liner from workspace root:
-.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
+.venv/Scripts/python.exe "Analytics Agent/run.py" --task kpi-snapshot --action daily-snapshot
+.venv/Scripts/python.exe "Analytics Agent/run.py" --task report --action daily-digest
+.venv/Scripts/python.exe "Analytics Agent/run.py" --task cohort --action retention-matrix
+.venv/Scripts/python.exe "Analytics Agent/run.py" --task ab-test --action list-experiments
+.venv/Scripts/python.exe "Analytics Agent/run.py" --task attribution --action channel-report
+.venv/Scripts/python.exe "Analytics Agent/run.py" --task funnel-calc --action full-funnel
 ```
 
-### Available API Modules
+### 4. Notion Database Access
+**Write**: kpi_snapshots, funnel_metrics
+**Read**: ALL 27 databases (full read access for cross-agent analysis)
 
-**Notion** (report storage, analytics briefs):
-```python
-from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
-# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
-# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
-# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
-# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
-# financial_reports, meeting_notes, knowledge_base, growth_experiments
+### 5. API Permissions (from api_registry.py)
+| API | Access Level |
+|-----|-------------|
+| Notion | Full |
+| Supabase | Read |
+| Google Sheets | Full |
+| Creem.io | Read |
+| YouTube | Read |
+| LinkedIn | Read |
+| Instagram | Read |
+| Vercel | Read |
+| Railway | Read |
+| Cloudflare | Read |
+| Short.io | Read |
+| GoCardless | Read |
+| GitHub | Read |
 
-results = query_db('analytics_kpis', filter={"property": "Period", "rich_text": {"contains": "2026-02"}})
-results = query_db('ab_tests')
-results = query_db('growth_experiments')
-log_task(agent="Analytics", task="kpi-dashboard", status="complete", output_summary="Weekly KPI report generated")
-```
-
-**Supabase** (user database, auth events, usage logs):
-```python
-from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
-users = query_users(limit=10)
-sub = get_subscription(user_id)
-count = count_active_subs()
-```
-
-**Google Sheets** (dashboard output, CRM data):
-```python
-from shared.gsheets_client import read_range, write_range, append_rows
-data = read_range(spreadsheet_id, "Sheet1!A1:D10")
-```
-
-**Dashboard** (system health, business metrics):
-```python
-from shared.dashboard import generate_report, get_service_health, get_business_metrics
-report = generate_report()
-```
-
-**Access Guard** (secure agent sessions):
-```python
-from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
-with AgentSession("Analytics") as session:
-    results = session.query_db('analytics_kpis')
-```
-
-### Running Your Execution Scripts
-```bash
-# List available tasks:
-.venv\Scripts\python.exe "Analytics Agent\run.py" --list-tasks
-
-# Run a specific task:
-.venv\Scripts\python.exe "Analytics Agent\run.py" --task task-name --action action-name
-```
-
-### Reading Context Files
-You can read any file in the workspace using the `context` tool, including:
-- `Context/hedge-edge-business-context.md` — full business context
-- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
-- Any skill's SKILL.md for detailed instructions
-
-## API Keys & Platforms
-
-| Platform | Environment Variable(s) | Purpose |
-|---|---|---|
-| Google Analytics 4 | GA4_MEASUREMENT_ID, GA4_API_SECRET | Website traffic, landing page funnel, UTM tracking, conversion events |
-| Supabase | SUPABASE_URL, SUPABASE_KEY | User database, auth events, subscription status, usage logs, feature adoption |
-| Creem.io | CREEM_API_KEY | Payment events, subscription lifecycle (new, upgrade, downgrade, churn, reactivation), MRR calculation |
-| Google Sheets API | GOOGLE_SHEETS_API_KEY | Dashboard output, CRM data (lead tracking, IB activations), manual data inputs |
-| Notion API | NOTION_API_KEY | Report storage, weekly/monthly analytics briefs, stakeholder documentation |
-| local automation scripts (Railway) | RAILWAY_TOKEN | Automated data pipelines, scheduled report triggers, cross-platform data sync |
-| Vercel Analytics | VERCEL_ANALYTICS_TOKEN | Landing page performance (Core Web Vitals, page views, unique visitors, bounce rate) |
-| Discord Bot | DISCORD_BOT_TOKEN | Community engagement metrics (messages/day, active members, support threads, sentiment) |
-| PostHog/Mixpanel | ANALYTICS_API_KEY | Product analytics, in-app feature usage, session recordings, event funnels (future integration) |
+### CRITICAL RULES
+1. **NEVER hardcode API keys** — all credentials are in `.env`, loaded automatically
+2. **ALWAYS execute** — when asked for metrics, reports, or analysis, RUN the scripts and query the APIs
+3. **Log every action** — call `log_task()` after completing any operation
+4. **Cross-reference sources** — use multiple APIs to validate data (e.g., Creem subscriptions vs Supabase users)

@@ -131,103 +131,64 @@ Manages the technical and product aspects of integrating new trading platforms (
 ### 6. QA Automation (qa-automation)
 Designs and maintains the test strategy for Hedge Edge across unit tests, integration tests, and end-to-end hedge simulation tests. Covers critical paths: hedge execution under latency stress, multi-account synchronization, broker reconnection during open positions, Electron auto-update with active hedges, and prop firm compliance rule validation. Manages test environments that simulate real market conditions without risking capital.
 
-## Infrastructure Access — How to Execute
+## Infrastructure Access — How To Execute
 
-You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+You have FULL access to the workspace filesystem and a complete Python API layer. **You are NOT limited to conversation-only responses.** When asked to triage bugs, manage roadmap, or publish releases, **execute it** using the tools below.
 
-**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
-**Python interpreter**: `.venv\Scripts\python.exe`  
+**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`
+**Python interpreter**: `.venv\Scripts\python.exe`
 **All API keys are loaded from `.env` automatically** — never hardcode secrets.
 
 ### Quick-Start Pattern
 ```bash
-# One-liner from workspace root:
-.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
+.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('feature_roadmap'))"
 ```
 
-### Available API Modules
+### Your Notion Databases
 
-**Notion** (roadmap, sprint tracking, PRDs):
+| DB Key | Purpose | Access |
+|--------|---------|--------|
+| `feature_roadmap` | Product roadmap & feature tracking | **write** |
+| `bug_tracker` | Bug reports & triage | **write** |
+| `release_log` | Release history & changelogs | **write** |
+| `feedback` | User feedback | read |
+| `support_tickets` | Support tickets | read |
+| `kpi_snapshots` | KPI metrics | read |
+
 ```python
-from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
-# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
-# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
-# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
-# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
-# financial_reports, meeting_notes, knowledge_base, growth_experiments
+from shared.notion_client import query_db, add_row, update_row, log_task
 
-results = query_db('product_roadmap', filter={"property": "Status", "status": {"equals": "In Progress"}})
-results = query_db('bug_reports', filter={"property": "Severity", "select": {"equals": "P0-Critical"}})
-results = query_db('releases')
-results = query_db('user_feedback')
+# Query roadmap
+results = query_db('feature_roadmap', filter={"property": "Status", "status": {"equals": "In Progress"}})
+# Triage bugs
+results = query_db('bug_tracker', filter={"property": "Severity", "select": {"equals": "P0-Critical"}})
+# Log a release
+add_row('release_log', {"Name": {"title": [{"text": {"content": "v2.1.0"}}]}})
+# Log task completion
 log_task(agent="Product", task="bug-triage", status="complete", output_summary="Triaged 15 bug reports")
 ```
 
-**Supabase** (user data, feature flags, error logs):
-```python
-from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
-users = query_users(limit=10)
-sub = get_subscription(user_id)
-count = count_active_subs()
-```
+### Your API Modules
 
-**GitHub** (repository management, issues, releases):
-```python
-from shared.github_client import list_repos, list_issues, create_issue, list_releases, get_repo_stats
-issues = list_issues("Ryko1141", "Agentic-Hedge-Edge", state="open")
-```
-
-**Vercel** (landing page deployments, preview URLs):
-```python
-from shared.vercel_client import list_projects, list_deployments, list_domains
-projects = list_projects()
-```
-
-**Cloudflare** (DNS, security, performance):
-```python
-from shared.cloudflare_client import get_status_summary, list_zones, get_zone_analytics
-summary = get_status_summary()
-```
-
-**Discord** (bug reports, release announcements):
-```python
-from shared.discord_client import send_message, send_embed, get_guild_info, get_guild_channels, post_webhook
-send_message(channel_id, "v2.1.0 released! Check #updates for details.")
-send_embed(channel_id, "Release v2.1.0", "Bug fixes and performance improvements", color=0x00ff00)
-```
-
-**Access Guard** (secure agent sessions):
-```python
-from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
-with AgentSession("Product") as session:
-    results = session.query_db('product_roadmap')
-```
+| Module | Import | Access | Purpose |
+|--------|--------|--------|---------|
+| Notion | `from shared.notion_client import *` | full | Product databases (see table above) |
+| GitHub | `from shared.github_client import list_repos, list_issues, create_issue, list_releases, get_repo_stats, create_release, list_commits, get_commit` | full | Repos, PRs, issues, releases |
+| Vercel | `from shared.vercel_client import list_projects, list_deployments, list_domains, get_deployment, get_project` | full | Deploy, rollback, preview URLs |
+| Railway | `from shared.railway_client import list_services, get_service, list_deployments as rail_deploys, get_deploy_logs, redeploy_service` | full | Build/deploy automation |
+| Cloudflare | `from shared.cloudflare_client import get_status_summary, list_zones, get_zone_analytics` | read | DNS, security, traffic data |
+| Supabase | `from shared.supabase_client import query_users, get_subscription, count_active_subs, get_user_by_email, get_supabase` | full | User data, feature flags, schema |
+| Discord | `from shared.discord_client import send_message, send_embed, post_webhook` | write | Release notes, bug report channels |
+| Access Guard | `from shared.access_guard import AgentSession` | — | Secure agent sessions |
 
 ### Running Your Execution Scripts
 ```bash
-# List available tasks:
 .venv\Scripts\python.exe "Product Agent\run.py" --list-tasks
-
-# Run a specific task:
 .venv\Scripts\python.exe "Product Agent\run.py" --task task-name --action action-name
 ```
 
-### Reading Context Files
-You can read any file in the workspace using the `context` tool, including:
-- `Context/hedge-edge-business-context.md` — full business context
-- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
-- Any skill's SKILL.md for detailed instructions
-
-## API Keys & Platforms
-
-| Platform | Environment Variables | Usage |
-|---|---|---|
-| **GitHub API** | GITHUB_TOKEN | Repository management, issue/PR creation, release publishing, commit history for changelogs |
-| **Supabase** | SUPABASE_URL, SUPABASE_KEY | User data queries, feature flag management, error/trade event logs, feedback submissions |
-| **Notion API** | NOTION_API_KEY | Roadmap database CRUD, sprint tracking, PRD/spec pages, progress dashboards |
-| **console logging (console logging later)** | # console logging (console logging later)_DSN (skipped for now) | Crash report ingestion, error trend analysis, release health monitoring, session replay |
-| **Electron Auto-Update** | ELECTRON_UPDATE_URL | Version manifest management, staged rollout percentages, rollback triggers |
-| **Vercel** | VERCEL_TOKEN | Landing page deployments, preview URLs for changelog/docs pages |
-| **Discord Bot** | DISCORD_BOT_TOKEN | Bug report ingestion from #bug-reports, release announcements to #updates, sentiment monitoring |
-| **local automation scripts (Railway)** | RAILWAY_TOKEN | Build/deploy automation triggers, Notion-GitHub sync workflows, alert routing |
-| **MetaTrader Manager API** | MT_MANAGER_API_KEY (future) | EA version distribution, trade event telemetry, remote configuration updates |
+### Critical Rules
+1. **Never hardcode API keys** — all credentials load from `.env` via `dotenv`
+2. **Use Access Guard** for any multi-step operation: `with AgentSession("Product") as s:`
+3. **Log every completed task** via `log_task(agent="Product", ...)`
+4. **Read context** from `Context/hedge-edge-business-context.md` and `shared/notion_client.py` for DATABASES dict

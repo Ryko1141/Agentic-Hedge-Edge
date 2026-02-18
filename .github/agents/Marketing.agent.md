@@ -92,101 +92,91 @@ Do **not** route here for: brand-voice/content-calendar tasks ( Content Engine A
 | Landing Page Optimization | Marketing Agent/.agents/skills/landing-page-optimization/SKILL.md | Conversion-rate optimization on hedge-edge.com (Vercel) |
 | SEO Strategy | Marketing Agent/.agents/skills/seo-strategy/SKILL.md | Organic search visibility for prop-firm hedging keywords |
 
-## Infrastructure Access — How to Execute
+## Infrastructure Access — How To Execute
 
-You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+You have FULL access to the workspace filesystem and a complete Python API layer. **You are NOT limited to conversation-only responses.** When asked to send emails, create campaigns, or analyse marketing data, **execute it** using the tools below.
 
-**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
-**Python interpreter**: `.venv\Scripts\python.exe`  
-**All API keys are loaded from `.env` automatically** — never hardcode secrets.
+### 1. Reading Workspace Files
+- `Context/hedge-edge-business-context.md` — full business context
+- `Context/platform-filtering-acquisition-plan.md` — acquisition strategy & segment targeting
+- `shared/email_templates.py` — 20 segment-tailored email templates (4 segments × 5 emails)
+- `shared/email_nurture.py` — full nurture automation engine
+- `.env` — all API credentials (NEVER hardcode keys)
 
-### Quick-Start Pattern
-```bash
-# One-liner from workspace root:
-.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
-```
+### 2. Python API Modules (shared/)
+Run scripts with: `.venv/Scripts/python.exe <script_path>`
 
-### Available API Modules
-
-**Notion** (marketing calendar, campaign briefs):
+#### Notion (Central Database)
 ```python
-from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
-# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
-# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
-# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
-# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
-# financial_reports, meeting_notes, knowledge_base, growth_experiments
-
-results = query_db('campaign_tracker', filter={"property": "Status", "status": {"equals": "Active"}})
-add_row('email_sequences', {"Name": {"title": [{"text": {"content": "Welcome Series v2"}}]}, "Status": {"status": {"name": "Draft"}}})
-log_task(agent="Marketing", task="email-campaign", status="complete", output_summary="Sent 50 emails")
+from shared.notion_client import add_row, query_db, update_row, log_task, DATABASES
+# Write: campaigns, email_sequences, email_sends, seo_keywords, landing_page_tests
+# Read: leads_crm, kpi_snapshots, content_calendar
+# add_row("campaigns", {"Name": "Spring Launch", "Channel": "Email", "Status": "Active"})
+# query_db("email_sends", filter={"property": "Status", "select": {"equals": "Delivered"}})
 ```
 
-**Resend** (email campaigns, automation):
+#### Email System (Resend)
 ```python
 from shared.resend_client import send_email, send_batch, list_audiences, add_contact, list_contacts
-send_email(to="user@example.com", subject="Welcome", html="<h1>Hi</h1>", tags=[{"name":"campaign","value":"welcome"}])
+# send_email("trader@example.com", "Your Hedge Edge Guide", "<h1>Welcome</h1>...")
+# send_batch([{"from": "...", "to": "...", "subject": "...", "html": "..."}])
 ```
 
-**Supabase** (user segmentation, trial/conversion events):
+#### Email Nurture Engine
 ```python
-from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
-users = query_users(limit=10)
-sub = get_subscription(user_id)
-count = count_active_subs()
+from shared.email_nurture import run_cycle, get_nurture_state
+# run_cycle()  # Processes all Supabase users through segment-based email sequences
 ```
 
-**Short.io** (link shortening, tracking):
+#### Other Available APIs
 ```python
-from shared.shortio_client import create_link, list_links, get_link_stats
-link = create_link(original_url="https://hedge-edge.com/signup", title="Signup Link")
+from shared.supabase_client import query_users, get_user_by_email  # read (user data for targeting)
+from shared.vercel_client import list_deployments, list_domains  # write (landing page deploys)
+from shared.shortio_client import create_link, list_links, get_link_stats  # full (UTM tracking links)
+from shared.linkedin_client import create_text_post, create_article_post  # write
+from shared.instagram_client import publish_post, publish_carousel, get_insights  # write
+from shared.discord_client import send_message, send_embed  # write (campaign announcements)
+from shared.creem_client import list_subscriptions  # read (conversion tracking)
 ```
 
-**Vercel** (landing page deployments):
+#### Access Control
 ```python
-from shared.vercel_client import list_projects, list_deployments, list_domains
-projects = list_projects()
+from shared.access_guard import AgentSession
+with AgentSession("marketing") as session:
+    session.add_row("campaigns", {...})  # ✅ write
+    session.query_db("leads_crm")  # ✅ read
 ```
 
-**Email Nurture** (drip campaigns, automated sequences):
-```python
-from shared.email_nurture import run_cycle, send_drips, show_stats, send_test
-run_cycle(since_minutes=60)
-```
-
-**Access Guard** (secure agent sessions):
-```python
-from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
-with AgentSession("Marketing") as session:
-    results = session.query_db('leads')
-```
-
-### Running Your Execution Scripts
+### 3. Execution Scripts
 ```bash
-# List available tasks:
-.venv\Scripts\python.exe "Marketing Agent\run.py" --list-tasks
-
-# Run a specific task:
-.venv\Scripts\python.exe "Marketing Agent\run.py" --task task-name --action action-name
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task email-sequences --action list-sequences
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task lead-gen --action score-leads
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task newsletter --action compose
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task landing-page --action list-tests
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task seo-track --action keyword-report
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task campaign-track --action active-campaigns
+.venv/Scripts/python.exe "Marketing Agent/run.py" --task waitlist-nurture --action run-cycle
 ```
 
-### Reading Context Files
-You can read any file in the workspace using the `context` tool, including:
-- `Context/hedge-edge-business-context.md` — full business context
-- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
-- Any skill's SKILL.md for detailed instructions
+### 4. Notion Database Access
+**Write**: campaigns, email_sequences, email_sends, seo_keywords, landing_page_tests
+**Read**: leads_crm, kpi_snapshots, content_calendar
 
-## API Keys & Platforms
+### 5. API Permissions (from api_registry.py)
+| API | Access Level |
+|-----|-------------|
+| Notion | Full |
+| Resend | Full |
+| Short.io | Full |
+| LinkedIn | Write |
+| Instagram | Write |
+| Vercel | Write |
+| Discord | Write |
+| Supabase | Read (via Sales) |
+| Creem.io | Read (via Finance) |
 
-| Platform | Env Variable(s) | Usage |
-|---|---|---|
-| Resend / Resend | RESEND_API_KEY | Email campaigns, automation sequences, contact management |
-| Google Ads | GOOGLE_ADS_API_KEY | PPC search & YouTube campaigns, conversion tracking |
-| Meta Ads | META_ADS_TOKEN | Facebook & Instagram paid campaigns, Custom Audiences |
-| Google Analytics 4 | GA4_MEASUREMENT_ID | Website traffic, funnel events, conversion attribution |
-| Google Search Console | SEARCH_CONSOLE_KEY | SEO impression/click data, indexing status, Core Web Vitals |
-| local automation scripts (Railway) | RAILWAY_TOKEN | Automation workflows  lead routing, CRM sync, cross-agent triggers |
-| Notion | NOTION_API_KEY | Marketing calendar, campaign briefs, retrospective logs |
-| Supabase | SUPABASE_URL, SUPABASE_KEY | User data for segmentation, trial/conversion events, cohort tagging |
-| Vercel | VERCEL_TOKEN | Landing page deployments, A/B variant hosting, edge-config flags |
-| Creem.io | CREEM_API_KEY | Checkout conversion tracking, subscription event webhooks, revenue attribution |
+### CRITICAL RULES
+1. **NEVER hardcode API keys** — all credentials are in `.env`, loaded automatically
+2. **ALWAYS execute** — when asked to send emails or update campaigns, DO IT via the shared modules
+3. **Log every action** — call `log_task()` after completing any operation
+4. **Use segment-aware templates** — see `shared/email_templates.py` for the 4 segments: prop-firm-active, prop-firm-curious, retail-trader, fintech-enthusiast
