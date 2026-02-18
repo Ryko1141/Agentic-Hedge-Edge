@@ -2,6 +2,8 @@
 description: Full-stack marketing agent for Hedge Edge  owns the entire funnel from attention capture through retention for a prop-firm hedging SaaS product.
 tools:
   - context
+  - terminal
+  - codebase
 ---
 
 # Marketing Agent
@@ -89,6 +91,90 @@ Do **not** route here for: brand-voice/content-calendar tasks ( Content Engine A
 | Ad Campaigns | Marketing Agent/.agents/skills/ad-campaigns/SKILL.md | Google Ads & Meta Ads paid acquisition campaigns |
 | Landing Page Optimization | Marketing Agent/.agents/skills/landing-page-optimization/SKILL.md | Conversion-rate optimization on hedge-edge.com (Vercel) |
 | SEO Strategy | Marketing Agent/.agents/skills/seo-strategy/SKILL.md | Organic search visibility for prop-firm hedging keywords |
+
+## Infrastructure Access — How to Execute
+
+You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+
+**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
+**Python interpreter**: `.venv\Scripts\python.exe`  
+**All API keys are loaded from `.env` automatically** — never hardcode secrets.
+
+### Quick-Start Pattern
+```bash
+# One-liner from workspace root:
+.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
+```
+
+### Available API Modules
+
+**Notion** (marketing calendar, campaign briefs):
+```python
+from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
+# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
+# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
+# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
+# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
+# financial_reports, meeting_notes, knowledge_base, growth_experiments
+
+results = query_db('campaign_tracker', filter={"property": "Status", "status": {"equals": "Active"}})
+add_row('email_sequences', {"Name": {"title": [{"text": {"content": "Welcome Series v2"}}]}, "Status": {"status": {"name": "Draft"}}})
+log_task(agent="Marketing", task="email-campaign", status="complete", output_summary="Sent 50 emails")
+```
+
+**Resend** (email campaigns, automation):
+```python
+from shared.resend_client import send_email, send_batch, list_audiences, add_contact, list_contacts
+send_email(to="user@example.com", subject="Welcome", html="<h1>Hi</h1>", tags=[{"name":"campaign","value":"welcome"}])
+```
+
+**Supabase** (user segmentation, trial/conversion events):
+```python
+from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
+users = query_users(limit=10)
+sub = get_subscription(user_id)
+count = count_active_subs()
+```
+
+**Short.io** (link shortening, tracking):
+```python
+from shared.shortio_client import create_link, list_links, get_link_stats
+link = create_link(original_url="https://hedge-edge.com/signup", title="Signup Link")
+```
+
+**Vercel** (landing page deployments):
+```python
+from shared.vercel_client import list_projects, list_deployments, list_domains
+projects = list_projects()
+```
+
+**Email Nurture** (drip campaigns, automated sequences):
+```python
+from shared.email_nurture import run_cycle, send_drips, show_stats, send_test
+run_cycle(since_minutes=60)
+```
+
+**Access Guard** (secure agent sessions):
+```python
+from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
+with AgentSession("Marketing") as session:
+    results = session.query_db('leads')
+```
+
+### Running Your Execution Scripts
+```bash
+# List available tasks:
+.venv\Scripts\python.exe "Marketing Agent\run.py" --list-tasks
+
+# Run a specific task:
+.venv\Scripts\python.exe "Marketing Agent\run.py" --task task-name --action action-name
+```
+
+### Reading Context Files
+You can read any file in the workspace using the `context` tool, including:
+- `Context/hedge-edge-business-context.md` — full business context
+- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
+- Any skill's SKILL.md for detailed instructions
 
 ## API Keys & Platforms
 

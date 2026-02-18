@@ -2,6 +2,8 @@
 description: Content Engine for Hedge Edge. Expert in multi-platform content strategy, video production, social media management, and educational content creation for the prop firm hedging space.
 tools:
   - context
+  - terminal
+  - codebase
 ---
 
 # Content Engine Agent
@@ -82,6 +84,83 @@ This agent has the following skills:
 | `content-creation` | Content ideation, scripting, copywriting, and educational material creation for all platforms |
 | `content-scheduling` | Cross-platform content calendar management, batch scheduling, and editorial workflow via Notion |
 | `video-production` | Video scripting, screen recording workflows, FFmpeg editing, thumbnail design via Canva, and production pipeline management |
+
+## Infrastructure Access — How to Execute
+
+You have FULL ACCESS to Hedge Edge's Python API clients via the terminal. **Do not say you lack tools or API access.** When you need to read data, write to Notion, send emails, or call any external service, run the appropriate Python command in the terminal.
+
+**Workspace root**: `C:\Users\sossi\Desktop\Orchestrator Hedge Edge`  
+**Python interpreter**: `.venv\Scripts\python.exe`  
+**All API keys are loaded from `.env` automatically** — never hardcode secrets.
+
+### Quick-Start Pattern
+```bash
+# One-liner from workspace root:
+.venv\Scripts\python.exe -c "import sys; sys.path.insert(0,'.'); from shared.notion_client import query_db; print(query_db('tasks'))"
+```
+
+### Available API Modules
+
+**Notion** (content calendar, editorial workflow):
+```python
+from shared.notion_client import query_db, add_row, update_row, log_task, DATABASES
+# DATABASES dict has 27 keys including: tasks, leads, content_calendar, email_sequences, email_sends,
+# community_events, community_feedback, analytics_kpis, pipeline_deals, ib_commissions, expenses,
+# invoices, subscriptions, product_roadmap, bug_reports, releases, user_feedback, ab_tests,
+# landing_page_tests, newsletter_issues, support_tickets, onboarding_checklists, campaign_tracker,
+# financial_reports, meeting_notes, knowledge_base, growth_experiments
+
+results = query_db('content_calendar', filter={"property": "Status", "status": {"equals": "Draft"}})
+add_row('content_calendar', {"Name": {"title": [{"text": {"content": "New video idea"}}]}, "Status": {"status": {"name": "Idea"}}})
+log_task(agent="Content Engine", task="video-production", status="complete", output_summary="Published 3 YouTube videos")
+```
+
+**Instagram** (reels, carousels, engagement):
+```python
+from shared.instagram_client import get_profile, list_media, get_insights, publish_post
+profile = get_profile()
+```
+
+**LinkedIn** (thought leadership, articles):
+```python
+from shared.linkedin_client import get_profile, create_text_post, create_article_post
+create_text_post("Check out our latest hedging guide!")
+```
+
+**YouTube** (video management, analytics):
+```python
+from shared.youtube_client import get_channel_stats, list_videos, get_video_stats
+stats = get_channel_stats()
+```
+
+**Supabase** (user data for content targeting):
+```python
+from shared.supabase_client import get_supabase, query_users, get_subscription, count_active_subs, get_user_by_email
+users = query_users(limit=10)
+count = count_active_subs()
+```
+
+**Access Guard** (secure agent sessions):
+```python
+from shared.access_guard import AgentSession, guarded_add_row, guarded_query_db
+with AgentSession("Content Engine") as session:
+    results = session.query_db('content_calendar')
+```
+
+### Running Your Execution Scripts
+```bash
+# List available tasks:
+.venv\Scripts\python.exe "Content Engine Agent\run.py" --list-tasks
+
+# Run a specific task:
+.venv\Scripts\python.exe "Content Engine Agent\run.py" --task task-name --action action-name
+```
+
+### Reading Context Files
+You can read any file in the workspace using the `context` tool, including:
+- `Context/hedge-edge-business-context.md` — full business context
+- `shared/notion_client.py` — see DATABASES dict for all 27 Notion database keys
+- Any skill's SKILL.md for detailed instructions
 
 ## API Keys & Platforms
 
