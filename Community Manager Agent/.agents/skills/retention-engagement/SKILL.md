@@ -1,4 +1,4 @@
-﻿---
+---
 name: retention-engagement
 description: |
   Drives 30/60/90-day retention, reduces churn, increases LTV, and accelerates tier upgrades through proactive engagement scoring, re-engagement campaigns, referral program management, and community-driven habit reinforcement for Hedge Edge users.
@@ -70,9 +70,9 @@ Calculate a weekly engagement score (0-100) for each user based on:
 | Downgrade from paid to free | Immediate | Red  exit survey + win-back offer |
 | Posted negative sentiment in Discord | Detected via keyword scan | Yellow  personal empathetic response + escalate issue |
 
-**Churn alert pipeline (n8n):**
+**Churn alert pipeline (local automation scripts (Railway)):**
 1. Supabase query runs daily at 06:00 UTC  identifies users matching any churn signal.
-2. n8n webhook triggers appropriate response sequence.
+2. Railway-hosted automation script triggers appropriate response sequence.
 3. All alerts logged in Supabase churn_alerts table with status (	riggered, esponded, ecovered, churned).
 4. Weekly churn alert summary posted to internal #community-ops channel.
 
@@ -199,7 +199,7 @@ Automatically detect and celebrate:
 | Output | Format | Destination |
 |---|---|---|
 | Engagement scores | JSON per user | Supabase engagement_scores table |
-| Churn alerts | Webhook payload | n8n  Discord DM + Supabase churn_alerts |
+| Churn alerts | Webhook payload | local automation scripts (Railway)  Discord DM + Supabase churn_alerts |
 | Re-engagement DMs | Discord DM | User's Discord DM via bot |
 | Milestone celebrations | Discord message + role update | #wins-and-milestones + user DM |
 | Cohort analysis report | Markdown table | Notion Retention Dashboard + internal Discord |
@@ -212,7 +212,7 @@ Automatically detect and celebrate:
 |---|---|---|
 | Discord Bot API | DISCORD_BOT_TOKEN | DM sending, role updates, channel posting, reaction monitoring |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Engagement scoring, churn detection, referral tracking, cohort queries |
-| n8n | N8N_WEBHOOK_URL | Churn alert pipeline, re-engagement automation, milestone detection triggers |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Churn alert pipeline, re-engagement automation, milestone detection triggers |
 | Notion API | NOTION_API_KEY | Retention dashboard, cohort reports, campaign performance docs |
 | Discord Webhook | DISCORD_WEBHOOK_URL | Leaderboard updates, milestone announcements |
 | Typeform / Google Forms | FORM_API_KEY | Exit surveys, NPS collection, feature prioritization polls |

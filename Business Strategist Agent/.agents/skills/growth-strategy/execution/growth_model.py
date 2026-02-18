@@ -15,6 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 # ── Channel Definitions ──────────────────────────────────────────────────────
@@ -313,6 +318,8 @@ def main():
         print(f"  Avg Lifetime: {1/args.churn:.1f} months")
         result = {"arpu": args.arpu, "churn": args.churn, "ltv": round(ltv, 2)}
     
+    log_task("Business Strategist", f"Growth model: {args.action}", "Done", "Medium", json.dumps(result, default=str)[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

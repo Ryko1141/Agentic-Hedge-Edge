@@ -1,4 +1,4 @@
-﻿# Hedge Edge  Shared Business Context
+# Hedge Edge  Shared Business Context
 > This file is the single source of truth for all agents. Referenced via the context tool.
 > Last updated: 2026-02-15
 
@@ -44,12 +44,12 @@
 
 ### 1. SaaS Subscriptions (Primary)
 
-| Tier | Price | Features | Status |
-|------|-------|----------|--------|
-| Free Guide | $0 | Hedge education PDF + Discord access | **Live** |
-| Starter | $29/mo | MT5 EA, 1-2 accounts, basic hedge | **Live** |
-| Pro | $30/mo | Multi-account, advanced settings | **Coming Soon** |
-| Hedger | $75/mo | Unlimited accounts, priority support, all platforms | **Coming Soon** |
+| Tier | Monthly | Yearly (−30%) | Features | Status |
+|------|---------|---------------|----------|--------|
+| Hedge Guide | Free | Free | 1 funded/eval account, interactive hedge tutorial, Discord access, broker setup walkthrough | **Live** |
+| Challenge Shield | $29/mo | $19/mo ($249/yr) | 3 funded/eval accounts, automated hedge execution, basic analytics & P/L, automatic hedge calculation, email notifications, email support, +1 extra prop account via partner broker | **Live** |
+| Multi-Challenge | $59/mo | $39/mo ($499/yr) | 5 funded/eval accounts, full Hedge Analytics dashboard, per-challenge P/L attribution, hedge efficiency scoring, visual hedge map & charts, priority support | **Coming Soon** |
+| Unlimited | $99/mo | $69/mo ($849/yr) | Unlimited funded/eval accounts, MT4/MT5/cTrader support, optimal hedge sizing, spread cost analysis per broker, challenge ROI calculator, white-glove onboarding call, premium Discord channel | **Coming Soon** |
 
 ### 2. IB Commissions (Secondary)
 
@@ -91,12 +91,13 @@ Free hedge guide + Discord community  educate  convert to paid subscribers
 
 ## Current State (Feb 2026)
 
-- **Users**: ~500 active beta users
-- **MRR**: Growing (Starter tier live)
+- **Users**: 0 (pre-launch — "500 beta users" used in marketing copy as social proof target)
+- **MRR**: $0 (pre-revenue)
 - **Platforms**: MT5 EA live, MT4 and cTrader in development
-- **Community**: Active Discord server
+- **Community**: Discord server set up
 - **IB Agreements**: 2 signed (Vantage, BlackBull)
 - **Team**: Lean founding team
+- **Stage**: Pre-launch — product built, infrastructure wired, seeking first paying customers
 
 ---
 
@@ -111,7 +112,7 @@ Content Engine  Attention Layer  Capture & Identity  CRM  Sales  Delivery  Reten
 | Content Engine | YouTube, LinkedIn, Instagram | Watch time, Retention curve, Content ROI |
 | Attention Layer | Welcome email, Value prop, Newsletter | CTR, CPC, Engagement rate, Open rate |
 | Capture & Identity | Lead forms, Discord join | Lead capture rate, Lead-to-qualified ratio |
-| CRM / Data Core | Google Sheets + n8n | Data freshness, enrichment rate |
+| CRM / Data Core | Google Sheets + local automation scripts (Railway) | Data freshness, enrichment rate |
 | Sales & Monetization | Sales calls, demos | Close rate, Show-up rate, Sales cycle length |
 | Delivery | Onboarding, training | Support tickets per user |
 | Retention & Expansion | Discord check-ins, upsell | 30/60/90 day retention, LTV, Churn, Referral rate |
@@ -145,14 +146,14 @@ Content Engine  Attention Layer  Capture & Identity  CRM  Sales  Delivery  Reten
 | Discord | Community, support, onboarding | Community Manager, Sales, Content Engine |
 | Tide Bank | Business banking | Finance |
 | Google Sheets | CRM, financial models | Sales, Finance, Analytics |
-| n8n | Workflow automation | All |
+| local automation scripts (Railway) | Workflow automation | All |
 | Notion | Documentation, planning | All |
 | YouTube | Video content | Content Engine |
 | Instagram | Visual content | Content Engine |
 | LinkedIn | Professional content | Content Engine |
 | Vantage | IB broker partner | Finance, Business Strategist |
 | BlackBull | IB broker partner | Finance, Business Strategist |
-| Sentry | Error tracking | Product |
+| console logging | Error tracking | Product |
 | GitHub | Code management | Product |
 
 ---
@@ -165,3 +166,4 @@ Content Engine  Attention Layer  Capture & Identity  CRM  Sales  Delivery  Reten
 - **Hedge Edge value prop**: Even if you fail the challenge, you recovered capital on the hedge side. Even if you pass, you banked extra on the hedge
 - **Average trader runs**: 2-5 simultaneous challenges
 - **Key prop firms**: FTMO, The5%ers, TopStep, Apex Trader Funding, MyForexFunds
+

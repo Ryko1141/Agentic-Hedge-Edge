@@ -1,4 +1,4 @@
-﻿---
+---
 name: instagram-management
 description: |
   Manages the Hedge Edge Instagram presence. Handles reels, carousels, stories,
@@ -156,7 +156,7 @@ Define the content mix optimized for Instagram's algorithm and the prop firm aud
 |----------|----------|--------------|---------|
 | Instagram | Instagram Graph API | `INSTAGRAM_ACCESS_TOKEN` | Post publishing, story management, analytics, comment management |
 | Canva | Canva API | `CANVA_API_KEY` | Template creation, graphic design, brand consistency |
-| OpenAI | OpenAI API | `OPENAI_API_KEY` | Caption writing, hashtag expansion, content ideation |
+| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Caption writing, hashtag expansion, content ideation |
 | Notion | Notion API | `NOTION_API_KEY` | Content calendar sync, editorial tracking |
 
 ## Quality Checks

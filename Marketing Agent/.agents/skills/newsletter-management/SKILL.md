@@ -1,4 +1,4 @@
-﻿---
+---
 name: newsletter-management
 description: |
   Produce, distribute, and optimise the Hedge Edge recurring newsletter targeting prop-firm
@@ -60,7 +60,7 @@ one |
 - Write preview text (max 90 characters) that complements the subject line without repeating it.
 
 ### 3. List Preparation
-- Pull subscriber list from Brevo/Mailchimp via EMAIL_API_KEY.
+- Pull subscriber list from Resend via RESEND_API_KEY.
 - Apply segment filter if subscriber_segment is not ll.
 - Run pre-send hygiene:
   - Remove hard bounces from previous sends.
@@ -75,7 +75,7 @@ one |
 
 ### 5. Technical Build & Send
 - Build responsive HTML template (single-column, mobile-first, < 100KB).
-- Upload to Brevo/Mailchimp via EMAIL_API_KEY.
+- Upload to Resend via RESEND_API_KEY.
 - Schedule send: Tuesday 09:00 UTC (peak open window for UK/EU traders, morning for US East Coast).
 - Tag edition in Notion marketing calendar via NOTION_API_KEY.
 
@@ -97,7 +97,7 @@ one |
 - Update KPI dashboard: Topic-level CTR (which content themes drive the most engagement).
 
 ### 8. Deliverability Maintenance (Monthly)
-- Check sender reputation via Brevo/Mailchimp deliverability tools.
+- Check sender reputation via Resend deliverability tools.
 - Review SPF, DKIM, and DMARC records for hedgeedgebusiness@gmail.com sending domain.
 - Monitor blacklist status.
 - Prune inactive subscribers (no opens in 90 days)  send final re-engagement email before removal.
@@ -106,7 +106,7 @@ one |
 
 | Output | Format | Destination |
 |---|---|---|
-| Newsletter HTML | .html file | Brevo/Mailchimp template library |
+| Newsletter HTML | .html file | Resend template library |
 | Edition performance report | JSON { edition, subject_winner, open_rate, click_rate, ctor, unsub_rate, top_links[], device_split } | Google Sheets CRM + Notion |
 | Subscriber growth report | JSON { total_subscribers, new_this_edition, churned, net_growth, referral_signups } | Supabase + Notion |
 | Content resonance data | JSON { topic, ctr, click_count }[] | Content Engine Agent (for editorial calendar feedback) |
@@ -116,9 +116,9 @@ one |
 
 | Platform | Variable | Operations Used |
 |---|---|---|
-| Brevo / Mailchimp | EMAIL_API_KEY | Template upload, list management, campaign send, analytics pull |
+| Resend / Resend | RESEND_API_KEY | Template upload, list management, campaign send, analytics pull |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Subscriber data, referral tracking, event logging |
-| n8n | N8N_WEBHOOK_URL | Automate list sync, trigger post-send analytics collection |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Automate list sync, trigger post-send analytics collection |
 | Notion | NOTION_API_KEY | Marketing calendar, edition planning, retrospective logs |
 | GA4 | GA4_MEASUREMENT_ID | Track newsletter click-throughs to landing page behaviour |
 | Creem.io | CREEM_API_KEY | Generate referral coupon codes, track newsletter-attributed conversions |

@@ -1,4 +1,4 @@
-﻿---
+---
 name: linkedin-management
 description: |
   Manages the Hedge Edge LinkedIn presence. Handles article publishing, post
@@ -161,7 +161,7 @@ Content mix: 40% educational/thought leadership, 30% building-in-public, 20% par
 |----------|----------|--------------|---------|
 | LinkedIn | LinkedIn API (v2) | `LINKEDIN_ACCESS_TOKEN` | Post/article publishing, analytics, engagement |
 | Canva | Canva API | `CANVA_API_KEY` | Carousel PDFs, post images, article headers |
-| OpenAI | OpenAI API | `OPENAI_API_KEY` | Content drafting, hook generation, repurposing |
+| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Content drafting, hook generation, repurposing |
 | Notion | Notion API | `NOTION_API_KEY` | Content calendar sync, idea tracking |
 
 ## Quality Checks

@@ -1,8 +1,8 @@
-﻿---
+---
 name: user-feedback
 description: |
   Aggregates and synthesizes user feedback for Hedge Edge from Discord, in-app feedback
-  widgets, Sentry session data, and direct interviews. Clusters signals into actionable
+  widgets, console logging (console logging later) session data, and direct interviews. Clusters signals into actionable
   themes, quantifies demand, and produces briefs that feed the feature roadmap and
   bug triage pipelines. Focused on prop firm trader pain points and hedging workflow friction.
 ---
@@ -46,7 +46,7 @@ Transform the raw, unstructured voice of Hedge Edge's ~500 beta traders into pri
 - Each submission includes: user_id, feedback_type (bug, feature, praise, complaint), message text, app version, timestamp
 - Join with user_profiles for: subscription tier, active account count, broker config, days since signup
 
-**Sentry Session Data** (via SENTRY_DSN):
+**console logging (console logging later) Session Data** (via # console logging (console logging later)_DSN (skipped for now)):
 - Query sessions with frustration signals: repeated crashes, rage clicks, sessions ending within 30 seconds of a crash
 - Extract the user flow leading to frustration
 
@@ -121,7 +121,7 @@ For each Priority Signal theme produce:
 
 - Discord Bot (DISCORD_BOT_TOKEN): Read bug-reports, feature-requests, general, trading-chat; post summaries
 - Supabase (SUPABASE_URL, SUPABASE_KEY): Query feedback_submissions, user_profiles, trade_events
-- Sentry (SENTRY_DSN): Session frustration signals, crash frequency, error trends
+- console logging (console logging later) (# console logging (console logging later)_DSN (skipped for now)): Session frustration signals, crash frequency, error trends
 - Notion API (NOTION_API_KEY): Create feedback briefs, theme tracking database, roadmap links
 - GitHub API (GITHUB_TOKEN): Link themes to existing issues, create new issues
 

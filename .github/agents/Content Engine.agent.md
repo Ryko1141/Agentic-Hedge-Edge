@@ -1,4 +1,4 @@
-﻿---
+---
 description: Content Engine for Hedge Edge. Expert in multi-platform content strategy, video production, social media management, and educational content creation for the prop firm hedging space.
 tools:
   - context
@@ -91,6 +91,6 @@ This agent has the following skills:
 | Instagram | Instagram Graph API | `INSTAGRAM_ACCESS_TOKEN` | Reels/post publishing, story management, engagement tracking |
 | LinkedIn | LinkedIn API | `LINKEDIN_ACCESS_TOKEN` | Article and post publishing, engagement analytics |
 | Canva | Canva API | `CANVA_API_KEY` | Thumbnail generation, social media graphic design, brand template management |
-| OpenAI | OpenAI API | `OPENAI_API_KEY` | Content writing assistance, script generation, caption optimization |
+| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Content writing assistance, script generation, caption optimization |
 | FFmpeg | FFmpeg CLI | N/A (local install) | Video editing, format conversion, clip extraction, thumbnail frame capture |
 | Notion | Notion API | `NOTION_API_KEY` | Content calendar management, editorial workflow, idea backlog |

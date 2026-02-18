@@ -1,4 +1,4 @@
-﻿---
+---
 name: community-events
 description: |
   Plans, executes, and measures recurring and one-off community events for Hedge Edge  including weekly Hedge Lab calls, AMAs with the founder, trading challenges, milestone celebrations, and educational workshops  to drive engagement, retention, and tier upgrades.
@@ -51,7 +51,7 @@ Build a predictable rhythm of community events that give Hedge Edge users reason
 5. **Sneak Peek (5 min)**  Preview what's coming next week/month (builds anticipation for return).
 6. **Wrap-Up**  Remind about referral program, tier benefits, and next event.
 
-**Pre-event automation (n8n workflow):**
+**Pre-event automation (Python/Node automation script):**
 - **T-48 hours**: Post event reminder in #hedge-lab-events with agenda. Pin it.
 - **T-24 hours**: DM all users who attended the last Hedge Lab: "Tomorrow's Hedge Lab covers [topic]  see you there!"
 - **T-1 hour**: Post reminder in #announcements + #hedge-lab-events.
@@ -196,7 +196,7 @@ Post the quarterly calendar to Notion and pin it in #hedge-lab-events.
 | Discord Bot API | DISCORD_BOT_TOKEN | Stage Channel management, event announcements, RSVP tracking, attendance monitoring |
 | Discord Webhook | DISCORD_WEBHOOK_URL | Automated reminders, milestone celebration posts, leaderboard updates |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Event attendance tracking, challenge participation, prize fulfillment records |
-| n8n | N8N_WEBHOOK_URL | Pre-event reminder workflows, post-event follow-up automation, RSVP DM triggers |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Pre-event reminder workflows, post-event follow-up automation, RSVP DM triggers |
 | Notion API | NOTION_API_KEY | Event calendar, workshop summaries, AMA transcripts, knowledge base articles |
 | Typeform / Google Forms | FORM_API_KEY | Post-event feedback surveys (for longer-form feedback beyond Discord reactions) |
 

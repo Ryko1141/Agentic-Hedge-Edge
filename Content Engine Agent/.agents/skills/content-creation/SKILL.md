@@ -1,4 +1,4 @@
-﻿---
+---
 name: content-creation
 description: |
   Handles content ideation, scripting, copywriting, and educational material
@@ -184,7 +184,7 @@ Repurposing rules:
 
 | Platform | API/Tool | Env Variable | Purpose |
 |----------|----------|--------------|---------|
-| OpenAI | OpenAI API | `OPENAI_API_KEY` | Content drafting, ideation, scriptwriting, caption generation |
+| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Content drafting, ideation, scriptwriting, caption generation |
 | Notion | Notion API | `NOTION_API_KEY` | Content idea backlog, editorial calendar, guide drafts |
 | Canva | Canva API | `CANVA_API_KEY` | Guide design, carousel design, visual asset creation |
 | YouTube | YouTube Data API v3 | `YOUTUBE_API_KEY` | Keyword research, competitor video analysis |

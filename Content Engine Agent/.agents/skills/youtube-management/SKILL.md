@@ -1,4 +1,4 @@
-﻿---
+---
 name: youtube-management
 description: |
   Manages the Hedge Edge YouTube channel end-to-end. Handles video uploads,
@@ -152,7 +152,7 @@ Grow the Hedge Edge YouTube channel into the authoritative source for prop firm 
 |----------|----------|--------------|---------|
 | YouTube | YouTube Data API v3 | `YOUTUBE_API_KEY` | Upload, metadata, analytics, comments, community posts |
 | Canva | Canva API | `CANVA_API_KEY` | Thumbnail generation |
-| OpenAI | OpenAI API | `OPENAI_API_KEY` | Title/description generation, keyword expansion |
+| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Title/description generation, keyword expansion |
 | FFmpeg | FFmpeg CLI | N/A | Shorts extraction, format conversion |
 
 ## Quality Checks

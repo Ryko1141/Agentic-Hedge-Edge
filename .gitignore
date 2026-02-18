@@ -31,3 +31,6 @@ desktop.ini
 # Logs
 *.log
 npm-debug.log*
+
+# Script output files
+scripts/output/

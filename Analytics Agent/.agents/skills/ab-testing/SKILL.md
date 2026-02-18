@@ -1,4 +1,4 @@
-﻿---
+---
 name: ab-testing
 description: |
   Design, monitor, and analyze controlled experiments across the Hedge Edge funnel  landing page variants, pricing page layouts, onboarding flows, email sequences, feature rollouts, and in-app messaging. Ensure statistical rigor with proper sample sizing, sequential testing boundaries, significance calculations, and guardrail metrics. Prevent common pitfalls including peeking, p-hacking, Simpson's paradox, and novelty effects.
@@ -82,7 +82,7 @@ Replace opinion-driven decisions with evidence-based experimentation. Every chan
    - Ensure both variants load from same CDN/edge with identical performance
    - Track variant assignment in GA4 as a custom dimension
    - Track conversion events (signup_click, trial_start) with variant tag
-2. **Email tests** (n8n/email platform):
+2. **Email tests** (local automation scripts (Railway)/email platform):
    - Split the send list randomly before sending
    - Track opens, clicks, and downstream conversions (signup, trial, paid) per variant
    - Ensure identical send time and sender for both variants
@@ -94,7 +94,7 @@ Replace opinion-driven decisions with evidence-based experimentation. Every chan
    - Limited by Creem.io customization options  test pre-checkout elements (pricing page layout, plan emphasis) rather than the checkout flow itself
 
 ### Step 4: Monitoring During Test
-1. **Daily check** (automated via n8n):
+1. **Daily check** (automated via local automation scripts (Railway)):
    - Sample sizes per variant (check for SRM)
    - Running conversion rates per variant (do NOT make decisions yet)
    - Guardrail metrics status (error rates, load times, support tickets)
@@ -181,7 +181,7 @@ When multiple test ideas exist, score and rank them:
 - Traffic split: [50/50]
 - Guardrail metrics: [list with thresholds]
 ## Implementation
-- Platform: [Vercel/Supabase/n8n]
+- Platform: [Vercel/Supabase/local automation scripts (Railway)]
 - Variant description: [specific change]
 - Tracking: [events to log, dimensions to capture]
 ## Monitoring Schedule
@@ -223,7 +223,7 @@ When multiple test ideas exist, score and rank them:
 | Vercel | Edge Config / Feature Flags (or URL param routing) | VERCEL_ANALYTICS_TOKEN | Landing page variant serving and performance data |
 | Google Sheets | Sheets API v4 | GOOGLE_SHEETS_API_KEY | Experiment log, results dashboard |
 | Notion | /v1/pages | NOTION_API_KEY | Experiment documentation (plans and results) |
-| n8n | POST N8N_WEBHOOK_URL | Webhook URL | Automated monitoring, SRM alerts, guardrail violation alerts |
+| local automation scripts (Railway) | POST RAILWAY_TOKEN | Webhook URL | Automated monitoring, SRM alerts, guardrail violation alerts |
 
 ## Quality Checks
 

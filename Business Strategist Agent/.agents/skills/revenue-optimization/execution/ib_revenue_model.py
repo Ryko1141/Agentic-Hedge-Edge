@@ -15,6 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 # ── Broker Partner Definitions ───────────────────────────────────────────────
@@ -239,6 +244,8 @@ def main():
         print(f"  Current referral:  {result['current_referral_rate']:.1%}")
         print(f"  Required referral: {result['required_referral_rate']:.1%}")
     
+    log_task("Business Strategist", f"IB revenue model: {args.action}", "Done", "Medium", json.dumps(result, default=str)[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,7 +1,7 @@
-﻿---
+---
 name: reporting-automation
 description: |
-  Build automated data pipelines via n8n that collect, transform, and distribute Hedge Edge analytics reports on daily, weekly, and monthly cadences. Push formatted dashboards to Google Sheets, narrative reports to Notion, alert summaries to Discord, and executive digests to email. Handle data freshness monitoring, error recovery, cross-platform data synchronization, and stakeholder-appropriate formatting to ensure every team member and agent has the right data at the right time without manual intervention.
+  Build automated data pipelines via local automation scripts (Railway) that collect, transform, and distribute Hedge Edge analytics reports on daily, weekly, and monthly cadences. Push formatted dashboards to Google Sheets, narrative reports to Notion, alert summaries to Discord, and executive digests to email. Handle data freshness monitoring, error recovery, cross-platform data synchronization, and stakeholder-appropriate formatting to ensure every team member and agent has the right data at the right time without manual intervention.
 ---
 
 # Reporting Automation
@@ -50,7 +50,7 @@ otion, discord_channel, email,
    `
    Example: Daily MRR Snapshot Pipeline
    
-   Trigger: n8n Cron  07:00 UTC daily
+   Trigger: local automation scripts (Railway) Cron  07:00 UTC daily
    
     Step 1: Query Supabase (active subscriptions, new signups, churned users)
        Validate: Row count > 0, no null plan_tier values
@@ -91,10 +91,10 @@ otion, discord_channel, email,
 | Monthly IB Report | 1st of month 9am UTC | Sheets CRM, Supabase | Google Sheets, Notion | IB revenue, lots, activation rates by broker |
 | Real-time Churn Alert | Event-triggered | Creem.io webhook | Discord #alerts, Email | Each cancellation with user details and risk flag |
 | Real-time Signup Alert | Event-triggered | Supabase webhook | Discord #growth | New signup with source attribution |
-| Real-time Payment Failure | Event-triggered | Creem.io webhook | Discord #alerts, n8n dunning flow | Failed payment with retry status |
+| Real-time Payment Failure | Event-triggered | Creem.io webhook | Discord #alerts, local automation scripts (Railway) dunning flow | Failed payment with retry status |
 
-### Step 2: n8n Workflow Construction
-For each pipeline, build the n8n workflow with these standard components:
+### Step 2: Python/Node automation script Construction
+For each pipeline, build the Python/Node automation script with these standard components:
 
 1. **Trigger node**:
    - Cron trigger for scheduled reports (with timezone = UTC)
@@ -110,7 +110,7 @@ For each pipeline, build the n8n workflow with these standard components:
      - Dimensions: sessionSource, sessionMedium, date
      - Metrics: sessions, conversions, 
 ewUsers
-   - **Google Sheets node**: Native n8n Google Sheets node for CRM/IB data reads
+   - **Google Sheets node**: Native local automation scripts (Railway) Google Sheets node for CRM/IB data reads
    - **Vercel HTTP node**: Analytics API with bearer token for landing page metrics
    - **Discord HTTP node**: Bot API for community metrics (member count, message count)
 3. **Validation nodes**:
@@ -120,7 +120,7 @@ ewUsers
      - Expected schema (required fields present)
      - Data freshness (most recent record timestamp within SLA)
    - Log validation results for debugging
-4. **Transformation nodes** (n8n Function or Code nodes):
+4. **Transformation nodes** (local automation scripts (Railway) Function or Code nodes):
    - Calculate derived metrics (MRR, growth rates, conversion rates, deltas)
    - Apply comparison logic (calculate WoW and MoM changes)
    - Format numbers (currency, percentages, with proper rounding)
@@ -129,7 +129,7 @@ ewUsers
    - **Google Sheets**: Append row or update specific cells in the dashboard spreadsheet
    - **Notion**: Create or update a page in the reports database using Notion API
    - **Discord**: Send formatted message to appropriate channel (#analytics, #alerts, #growth)
-   - **Email**: Send via n8n email node or SMTP to stakeholder distribution list
+   - **Email**: Send via local automation scripts (Railway) email node or SMTP to stakeholder distribution list
 6. **Error handling nodes**:
    - On data source failure: Retry up to 3 times with exponential backoff (10s, 30s, 90s)
    - If all retries fail: Use last successful data with STALE_DATA flag + alert to #alerts
@@ -294,7 +294,7 @@ Tab: Pipeline Health
 
 | Platform | Endpoint/Method | Auth | Purpose |
 |---|---|---|---|
-| n8n | Cron triggers, Webhook triggers, HTTP Request nodes, Function nodes | N8N_WEBHOOK_URL + workflow configs | Pipeline orchestration, scheduling, data transformation |
+| local automation scripts (Railway) | Cron triggers, Webhook triggers, HTTP Request nodes, Function nodes | RAILWAY_TOKEN + workflow configs | Pipeline orchestration, scheduling, data transformation |
 | Supabase | REST API (all tables) | SUPABASE_URL + SUPABASE_KEY | Primary data source for user, subscription, and usage data |
 | Creem.io | REST API + Webhooks | CREEM_API_KEY | Payment events, subscription lifecycle, webhook triggers |
 | GA4 | Data API v1 | GA4_MEASUREMENT_ID + GA4_API_SECRET | Traffic and conversion data for weekly/monthly reports |

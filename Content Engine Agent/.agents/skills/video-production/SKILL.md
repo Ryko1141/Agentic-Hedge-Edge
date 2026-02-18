@@ -1,4 +1,4 @@
-﻿---
+---
 name: video-production
 description: |
   Manages the full video production pipeline for Hedge Edge: scripting structure,
@@ -215,7 +215,7 @@ Produce professional-quality video content that demonstrates Hedge Edge's produc
 ### Phase 6: Caption Generation
 
 1. **Generate captions**:
-   - Use OpenAI Whisper API or local Whisper model for speech-to-text
+   - Use GitHub Copilot Whisper API or local Whisper model for speech-to-text
    - Output format: SRT (YouTube) or VTT (web)
    - Review and correct trading-specific terms: "FTMO", "MetaTrader", "Hedge Edge", "drawdown", "pip"
 
@@ -271,7 +271,7 @@ Produce professional-quality video content that demonstrates Hedge Edge's produc
 |----------|----------|--------------|---------|
 | FFmpeg | FFmpeg CLI | N/A (local install) | Video editing, audio processing, format conversion, clip extraction, caption burning |
 | Canva | Canva API | `CANVA_API_KEY` | Thumbnail design, visual templates, brand asset management |
-| OpenAI | OpenAI API | `OPENAI_API_KEY` | Whisper transcription for captions, script assistance |
+| GitHub Copilot | GitHub Copilot | `GITHUB_COPILOT (built-in)` | Whisper transcription for captions, script assistance |
 | OBS Studio | OBS CLI/API | N/A (local install) | Screen recording automation |
 
 ## Quality Checks

@@ -15,6 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 # ── Strategic Targets ─────────────────────────────────────────────────────────
@@ -383,6 +388,8 @@ def main():
             for i, step in enumerate(s["response_plan"], 1):
                 print(f"    {i}. {step}")
     
+    log_task("Business Strategist", f"Strategic scorecard: {args.action}", "Done", "Medium", json.dumps(result, default=str)[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

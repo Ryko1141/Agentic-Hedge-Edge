@@ -1,8 +1,8 @@
-﻿---
+---
 name: call-scheduling
 description: |
   Manages the end-to-end scheduling workflow for Hedge Edge sales and demo calls.
-  Books Calendly slots, creates Zoom meeting links, sends confirmation and reminder
+  Books Cal.com slots, creates Zoom meeting links, sends confirmation and reminder
   sequences, and handles rescheduling and no-show follow-ups to maintain 80% show-up rate.
 ---
 
@@ -47,8 +47,8 @@ scheduling_request:
 3. Filter out existing bookings, buffer 15 minutes between calls for prep/debrief.
 4. If preferred_datetime is provided, check if that exact slot is available first.
 
-### Step 2  Create Calendly Event
-1. Call Calendly API (CALENDLY_API_KEY) to create a one-time scheduling link for the appropriate call_type:
+### Step 2  Create Cal.com Event
+1. Call Cal.com API (CAL_API_KEY) to create a one-time scheduling link for the appropriate call_type:
    - discovery_15min  15-minute intro call for MQLs. Topic: "Discover how Hedge Edge automates your prop-firm hedging."
    - demo_30min  30-minute live demo for SQLs. Topic: "See Hedge Edge manage hedges across your {account_count} {prop_firm} accounts in real time."
    - closing_call_30min  30-minute call for pricing discussion and close. Topic: "Your personalised Hedge Edge plan  {tier} tier walkthrough."
@@ -63,7 +63,7 @@ scheduling_request:
    - Waiting room enabled
    - Recording set to cloud (for call review/coaching)
    - Meeting duration matches call_type
-2. Attach the Zoom link to the Calendly event.
+2. Attach the Zoom link to the Cal.com event.
 
 ### Step 4  Send Confirmation Sequence
 1. **Immediate confirmation** (within 30 seconds of booking):
@@ -79,7 +79,7 @@ scheduling_request:
 ### Step 5  Handle Edge Cases
 
 **Rescheduling:**
-1. Cancel the existing Calendly event and Zoom meeting.
+1. Cancel the existing Cal.com event and Zoom meeting.
 2. Present 3 alternative time slots from the availability check.
 3. Rebook and re-trigger the confirmation sequence.
 4. Update the CRM row with the new datetime and a "Rescheduled" note.
@@ -91,7 +91,7 @@ scheduling_request:
 4. If second no-show, downgrade lead classification by one tier (SQL  MQL) and add to nurture sequence.
 
 ### Step 6  Update CRM and Pipeline
-1. Write to Google Sheets CRM via n8n webhook: call type, datetime, Zoom link, confirmation sent, reminder status.
+1. Write to Google Sheets CRM via Railway-hosted automation script: call type, datetime, Zoom link, confirmation sent, reminder status.
 2. Update the Notion deal card with "Demo Scheduled" or "Closing Call Scheduled" stage.
 3. Log the full scheduling chain in the interaction history.
 
@@ -122,20 +122,20 @@ scheduling_result:
 
 | Platform | Variable | Operations Used |
 |---|---|---|
-| Calendly | CALENDLY_API_KEY | Create one-time event link, cancel event, list event types |
+| Cal.com | CAL_API_KEY | Create one-time event link, cancel event, list event types |
 | Zoom | ZOOM_API_KEY | Create meeting, delete meeting, get meeting details |
 | Google Calendar | GOOGLE_CALENDAR_KEY | List events (availability check), create calendar block |
 | Google Sheets | GOOGLE_SHEETS_API_KEY | Update lead row with scheduling data |
-| n8n | N8N_WEBHOOK_URL | Trigger reminder sequences, no-show follow-up workflows |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger reminder sequences, no-show follow-up workflows |
 | Discord Bot | DISCORD_BOT_TOKEN | Send DM confirmations and reminders |
 | Notion | NOTION_API_KEY | Update deal stage to "Demo Scheduled" or "Closing Call Booked" |
 
 ## Quality Checks
 
-- [ ] Every booked call has both a Calendly event and a Zoom meeting link  never one without the other.
+- [ ] Every booked call has both a Cal.com event and a Zoom meeting link  never one without the other.
 - [ ] Confirmation message is sent within 30 seconds of booking.
 - [ ] Pre-call brief includes the lead's prop-firm context, account count, current hedging method, and recommended tier.
-- [ ] No double-bookings: availability is re-checked immediately before Calendly event creation.
+- [ ] No double-bookings: availability is re-checked immediately before Cal.com event creation.
 - [ ] Timezone is explicitly confirmed and displayed in the lead's local time in all communications.
 - [ ] No-show follow-up fires within 10 minutes of missed call, not later.
 - [ ] Rescheduled calls are logged as rescheduled (not new bookings) to preserve the interaction chain.

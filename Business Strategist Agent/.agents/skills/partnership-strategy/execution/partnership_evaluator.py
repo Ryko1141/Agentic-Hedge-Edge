@@ -15,6 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 def evaluate_broker_partnership(
@@ -272,6 +277,8 @@ def main():
         print(f"  {result['verdict']}")
         print(f"  12-month profit: ${result['total_profit_usd']:,.2f}")
     
+    log_task("Business Strategist", f"Partnership evaluation: {args.action}", "Done", "Medium", json.dumps(result, default=str)[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

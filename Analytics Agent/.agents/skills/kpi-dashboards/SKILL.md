@@ -1,4 +1,4 @@
-﻿---
+---
 name: kpi-dashboards
 description: |
   Build and maintain real-time KPI dashboards for Hedge Edge. Track MRR waterfall, subscriber distribution by plan tier, IB commission revenue, daily/weekly/monthly active users, churn events, and top-line business health metrics. Pull live data from Supabase, Creem.io, Google Sheets, and Vercel Analytics. Output structured dashboards to Google Sheets and formatted reports to Notion.
@@ -96,7 +96,7 @@ Provide Hedge Edge leadership and all agents with a single source of truth for b
 ### Step 7: Anomaly Detection & Alerts
 1. Compare each metric against its trailing 7-day and 30-day moving averages
 2. Flag if current value deviates >2 standard deviations from the moving average
-3. For critical metrics (MRR, churn, signups), trigger n8n webhook to send Discord/email alert
+3. For critical metrics (MRR, churn, signups), trigger Railway-hosted automation script to send Discord/email alert
 4. Log anomaly with timestamp, metric name, expected range, actual value, and potential causes
 
 ## Output Specification
@@ -159,7 +159,7 @@ Tab 6: Landing Page
 ## Recommended Actions (ranked by revenue impact)
 `
 
-### Alert Format (Discord/Email via n8n)
+### Alert Format (Discord/Email via local automation scripts (Railway))
 `
  ANALYTICS ALERT  [Metric Name]
 Current: [value] | Expected Range: [range]
@@ -179,7 +179,7 @@ Dashboard Link: [Google Sheets URL]
 | Vercel Analytics | REST API (/v1/analytics) | VERCEL_ANALYTICS_TOKEN | 100 req/hr |
 | GA4 | Data API v1 (unReport, atchRunReports) | GA4_MEASUREMENT_ID + GA4_API_SECRET | 10 req/sec |
 | Discord | Bot API (/channels/{id}/messages) | DISCORD_BOT_TOKEN | 50 req/sec |
-| n8n | Webhook trigger (POST to N8N_WEBHOOK_URL) | Webhook URL with optional auth header | No hard limit |
+| local automation scripts (Railway) | Webhook trigger (POST to RAILWAY_TOKEN) | Webhook URL with optional auth header | No hard limit |
 
 ## Quality Checks
 

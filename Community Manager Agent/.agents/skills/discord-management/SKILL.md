@@ -1,4 +1,4 @@
-﻿---
+---
 name: discord-management
 description: |
   Manages the Hedge Edge Discord server architecture, moderation policies, auto-mod rules, role hierarchy, channel structure, and bot configuration to maintain a healthy, organized, and scalable trading community.
@@ -17,7 +17,7 @@ Design, maintain, and optimize the Hedge Edge Discord server so it serves as the
 - Managing role assignments based on user subscription tier (Free/Pro/Elite) or community status (Beta Tester, Challenge Passer, Top Referrer).
 - Responding to moderation incidents (rule violations, disputes, ban appeals).
 - Optimizing channel engagement based on analytics (dead channels, overcrowded channels, misrouted conversations).
-- Onboarding new Discord bots or webhook integrations (n8n triggers, Supabase sync).
+- Onboarding new Discord bots or webhook integrations (local automation scripts (Railway) triggers, Supabase sync).
 - Quarterly server audits to prune stale channels and refresh pinned resources.
 
 ## Input Specification
@@ -43,7 +43,7 @@ Maintain this channel structure, adjusting as community scales:
 - #role-select  Reaction-role message: pick your prop firm (FTMO, The5%ers, TopStep, Apex), broker (Vantage, BlackBull), and platform (MT5, MT4-soon, cTrader-soon).
 
 **Category: HEDGE EDGE PRODUCT**
-- #announcements  Product updates, new features, tier changes. Read-only, webhook-fed from n8n.
+- #announcements  Product updates, new features, tier changes. Read-only, webhook-fed from local automation scripts (Railway).
 - #hedge-setup-help  EA installation, broker linking, configuration troubleshooting. Primary support channel.
 - #mt5-ea-discussion  MT5 EA-specific discussion, settings sharing, optimization tips.
 - #mt4-ctrader-waitlist  Updates on MT4 and cTrader EA development. Early access sign-ups.
@@ -94,9 +94,9 @@ Configure Discord AutoMod + custom bot rules:
 
 ### 4. Webhook & Bot Deployment
 
-- **n8n Welcome Webhook**: Trigger on GUILD_MEMBER_ADD  send personalized DM with onboarding steps + hedge guide link + tier comparison.
-- **Supabase Role Sync**: Every 15 minutes, n8n workflow queries Supabase subscriptions table  updates Discord roles to match current tier (handles upgrades, downgrades, and cancellations).
-- **Announcement Webhook**: DISCORD_WEBHOOK_URL posts to #announcements when n8n detects new product release tag in GitHub or manual trigger from admin.
+- **local automation scripts (Railway) Welcome Webhook**: Trigger on GUILD_MEMBER_ADD  send personalized DM with onboarding steps + hedge guide link + tier comparison.
+- **Supabase Role Sync**: Every 15 minutes, Python/Node automation script queries Supabase subscriptions table  updates Discord roles to match current tier (handles upgrades, downgrades, and cancellations).
+- **Announcement Webhook**: DISCORD_WEBHOOK_URL posts to #announcements when local automation scripts (Railway) detects new product release tag in GitHub or manual trigger from admin.
 - **Milestone Bot**: Monitors #wins-and-milestones  when a message gets 10+ reactions, auto-cross-posts to #announcements as a community spotlight.
 
 ### 5. Quarterly Server Audit
@@ -126,7 +126,7 @@ Every 90 days, execute:
 | Discord Bot API | DISCORD_BOT_TOKEN | Server management, role CRUD, message monitoring, auto-mod configuration |
 | Discord Webhook | DISCORD_WEBHOOK_URL | Automated announcements, milestone cross-posts |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Role sync (subscription tier  Discord role), moderation logs, user metadata |
-| n8n | N8N_WEBHOOK_URL | Welcome DM trigger, role sync scheduler, announcement pipeline |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Welcome DM trigger, role sync scheduler, announcement pipeline |
 | Notion API | NOTION_API_KEY | Audit reports, auto-mod documentation, channel structure wiki |
 
 ## Quality Checks

@@ -23,7 +23,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Add parent dirs to path for shared utilities
-sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 def load_prop_firm_directory():
@@ -206,6 +207,8 @@ def main():
     else:
         print(output_json)
     
+    log_task("Business Strategist", f"Market research: {args.topic}", "Done", "Medium", json.dumps(results, default=str)[:500])
+
     return results
 
 

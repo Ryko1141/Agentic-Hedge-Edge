@@ -1,4 +1,4 @@
-﻿---
+---
 name: lead-qualification
 description: |
   Scores and qualifies inbound leads for Hedge Edge by evaluating their prop-firm trading profile,
@@ -20,7 +20,7 @@ Pro, or Hedger) and a defined next step (nurture, book demo, or direct close).
 - A visitor submits the landing-page contact form or downloads the Free Hedging Guide.
 - An existing Free-tier user asks about paid features.
 - A referral comes in from an IB partner, community member, or prop-firm forum.
-- The n8n webhook fires a 
+- The Railway-hosted automation script fires a 
 ew-lead event.
 
 ## Input Specification
@@ -71,7 +71,7 @@ supabase_user_id: string | null           # if they already have a Hedge Edge ac
 |---|---|---|
 | 025 | Cold | Add to nurture sequence; send Free Hedging Guide |
 | 2650 | Warm | Invite to Discord community; schedule educational follow-up |
-| 5175 | Marketing Qualified (MQL) | Book a 15-min discovery call via Calendly |
+| 5175 | Marketing Qualified (MQL) | Book a 15-min discovery call via Cal.com |
 | 7690 | Sales Qualified (SQL) | Book a 30-min demo call; prepare tier recommendation |
 | 91100 | Hot | Immediate outreach; send personalised Creem.io checkout link |
 
@@ -84,7 +84,7 @@ Based on the lead profile, recommend the optimal starting tier:
 - **Hedger (/mo)**  Trader with 5+ accounts, multiple firms, high notional exposure. Pitch: "At + notional across 5 FTMO accounts, one unhedged overnight gap could cost you  in drawdown breaches. Hedger tier is /mo insurance against that."
 
 ### Step 5  Log to CRM
-1. Trigger n8n webhook (N8N_WEBHOOK_URL) with the qualification payload.
+1. Trigger Railway-hosted automation script (RAILWAY_TOKEN) with the qualification payload.
 2. Write a new row (or update existing) in the Google Sheets CRM: Lead Name, Email, Discord Handle, Source, Score, Classification, Tier Recommendation, Next Action, Timestamp.
 3. If score  76, create a deal card in Notion (NOTION_API_KEY) in the Sales Pipeline database.
 
@@ -97,7 +97,7 @@ qualification_result:
   classification: enum[cold, warm, mql, sql, hot]
   tier_recommendation: enum[starter, pro, hedger]
   tier_reasoning: string                   # one-paragraph justification
-  next_action: string                      # e.g. "Book 30-min demo via Calendly"
+  next_action: string                      # e.g. "Book 30-min demo via Cal.com"
   next_action_owner: enum[sales_agent, marketing_agent, self_serve]
   crm_updated: boolean
   notion_deal_created: boolean
@@ -112,7 +112,7 @@ qualification_result:
 |---|---|---|
 | Supabase | SUPABASE_URL, SUPABASE_KEY | GET /rest/v1/users?email=eq.{email}  profile lookup |
 | Google Sheets | GOOGLE_SHEETS_API_KEY | Read/append rows in "Leads" sheet |
-| n8n | N8N_WEBHOOK_URL | POST webhook with qualification payload |
+| local automation scripts (Railway) | RAILWAY_TOKEN | POST webhook with qualification payload |
 | Notion | NOTION_API_KEY | Create page in Sales Pipeline database |
 | Discord Bot | DISCORD_BOT_TOKEN | Fetch user message history, send DM |
 | Creem.io | CREEM_API_KEY | Generate tier-specific checkout link for hot leads |

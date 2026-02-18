@@ -1,4 +1,4 @@
-﻿---
+---
 name: attribution-modeling
 description: |
   Determine which marketing touchpoints drive Hedge Edge signups, trial conversions, paid subscriptions, and IB activations. Implement multi-touch attribution models (first-touch, last-touch, linear, time-decay, data-driven) to allocate credit across channels  YouTube content, Discord community, paid ads, email nurture, organic search, and IB partner referrals. Enable data-driven marketing spend allocation by connecting every revenue dollar to the touchpoints that influenced it.
@@ -38,7 +38,7 @@ Eliminate the question "Is our marketing working?" by building a rigorous attrib
 | Field | Source | Description |
 |---|---|---|
 | discord_touchpoints | Discord Bot API + Supabase | Discord interactions before signup (join date, messages, channels active in) |
-| email_touchpoints | n8n/email platform | Email opens and clicks prior to conversion, mapped to user |
+| email_touchpoints | local automation scripts (Railway)/email platform | Email opens and clicks prior to conversion, mapped to user |
 | ib_referral_data | Google Sheets CRM | IB partner referral link clicks and conversions |
 | youtube_data | YouTube Analytics (manual/export) | Video performance data for content-level attribution |
 | ercel_pageviews | Vercel Analytics | Page-level engagement data (scroll depth, time on page, CTA clicks) |
@@ -251,7 +251,7 @@ Based on marginal CAC:LTV analysis:
 | Notion | /v1/pages | NOTION_API_KEY | Report storage |
 | Discord Bot | /guilds/{id}/members, message history | DISCORD_BOT_TOKEN | Discord interaction timestamps for community touchpoint data |
 | Vercel Analytics | /v1/analytics | VERCEL_ANALYTICS_TOKEN | Landing page engagement for page-level attribution |
-| n8n | POST N8N_WEBHOOK_URL | Webhook URL | Automated attribution report triggers |
+| local automation scripts (Railway) | POST RAILWAY_TOKEN | Webhook URL | Automated attribution report triggers |
 
 ## Quality Checks
 

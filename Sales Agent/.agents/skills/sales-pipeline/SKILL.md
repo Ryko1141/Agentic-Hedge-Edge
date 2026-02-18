@@ -1,4 +1,4 @@
-﻿---
+---
 name: sales-pipeline
 description: |
   Tracks all Hedge Edge deals through pipeline stages, forecasts monthly recurring revenue,
@@ -159,7 +159,7 @@ pipeline_output:
 | Notion | NOTION_API_KEY | Query Sales Pipeline database with filters; read deal card details |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Query subscription status, usage metrics, IB linkage |
 | Creem.io | CREEM_API_KEY | Fetch recent payment events, subscription statuses |
-| n8n | N8N_WEBHOOK_URL | Trigger stuck-deal follow-up workflows, weekly report distribution |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger stuck-deal follow-up workflows, weekly report distribution |
 
 ## Quality Checks
 
@@ -167,7 +167,7 @@ pipeline_output:
 - [ ] Stage SLAs are enforced: every deal exceeding its SLA appears in the stuck-deals list.
 - [ ] Forecast includes both SaaS MRR and IB commission revenue as separate line items.
 - [ ] Win/loss analysis includes at least 3 actionable insights, not just raw numbers.
-- [ ] Weekly review is generated every Monday by 09:00 UTC and distributed via n8n webhook.
+- [ ] Weekly review is generated every Monday by 09:00 UTC and distributed via Railway-hosted automation script.
 - [ ] Deal counts in the pipeline report match the actual CRM row count  reconciliation check on every report.
 - [ ] Tier-specific ACV values are correct: Starter=, Pro=, Hedger=.
 - [ ] No deal appears in both active pipeline and closed lists simultaneously.

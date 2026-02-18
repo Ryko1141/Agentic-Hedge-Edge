@@ -1,4 +1,4 @@
-﻿---
+---
 name: landing-page-optimization
 description: |
   Continuously test and improve the Hedge Edge landing page (hedge-edge.com) hosted on Vercel
@@ -138,7 +138,7 @@ ew_variant, mobile_ux |
 | Google Search Console | SEARCH_CONSOLE_KEY | Core Web Vitals, mobile usability, indexed page status |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Trial signup events for conversion attribution |
 | Creem.io | CREEM_API_KEY | Checkout events for pricing-page experiment attribution |
-| n8n | N8N_WEBHOOK_URL | Relay conversion events to GA4, automate experiment reporting |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Relay conversion events to GA4, automate experiment reporting |
 | Notion | NOTION_API_KEY | Experiment logs, CRO sprint planning, retrospective documentation |
 
 ## Quality Checks

@@ -1,4 +1,4 @@
-﻿---
+---
 name: ib-commission-tracking
 description: |
   Monitor, reconcile, and forecast Introducing Broker commissions from Vantage Markets and BlackBull Markets. Track referred Hedge Edge client trading volumes, calculate expected per-lot rebates by asset class, reconcile against broker commission reports and Tide Bank deposits, chase discrepancies, and model commission revenue projections based on user growth and trading activity.

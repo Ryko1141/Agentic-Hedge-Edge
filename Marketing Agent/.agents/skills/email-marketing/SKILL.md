@@ -1,4 +1,4 @@
-﻿---
+---
 name: email-marketing
 description: |
   Design, build, and optimise automated email sequences and one-off campaigns for Hedge Edge.
@@ -38,7 +38,7 @@ Maximise email-driven revenue by nurturing Hedge Edge leads and users through ta
 
 ### 1. Audience Extraction
 - Query Supabase via SUPABASE_URL + SUPABASE_KEY to pull the target segment.
-- Cross-reference with Google Sheets CRM (via n8n N8N_WEBHOOK_URL) for enrichment data (lead source, Discord membership, last email interaction).
+- Cross-reference with Google Sheets CRM (via local automation scripts (Railway) RAILWAY_TOKEN) for enrichment data (lead source, Discord membership, last email interaction).
 - Deduplicate and suppress users who have unsubscribed or marked spam.
 
 ### 2. Copy Creation
@@ -65,8 +65,8 @@ Maximise email-driven revenue by nurturing Hedge Edge leads and users through ta
 - Ensure unsubscribe link is present and functional (CAN-SPAM + UK GDPR).
 
 ### 4. Technical Setup
-- Upload HTML template to Brevo/Mailchimp via EMAIL_API_KEY.
-- Configure automation trigger (Supabase webhook  n8n  email platform).
+- Upload HTML template to Resend via RESEND_API_KEY.
+- Configure automation trigger (Supabase webhook  local automation scripts (Railway)  email platform).
 - Set A/B test split: 50/50 on subject lines, winner auto-sent after 4 hours to remaining list.
 - Tag campaign in Notion marketing calendar via NOTION_API_KEY.
 
@@ -94,9 +94,9 @@ Maximise email-driven revenue by nurturing Hedge Edge leads and users through ta
 
 | Platform | Variable | Operations Used |
 |---|---|---|
-| Brevo / Mailchimp | EMAIL_API_KEY | Create campaign, upload template, manage contacts, pull analytics |
+| Resend / Resend | RESEND_API_KEY | Create campaign, upload template, manage contacts, pull analytics |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Query user segments, read trial/conversion events, write email interaction logs |
-| n8n | N8N_WEBHOOK_URL | Trigger automation sequences, relay Supabase events to email platform |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger automation sequences, relay Supabase events to email platform |
 | Creem.io | CREEM_API_KEY | Fetch checkout events for conversion attribution, generate coupon codes |
 | Notion | NOTION_API_KEY | Log campaign briefs, record retrospectives, update marketing calendar |
 | GA4 | GA4_MEASUREMENT_ID | Track email-originated sessions and on-site behaviour post-click |

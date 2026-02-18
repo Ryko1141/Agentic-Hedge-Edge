@@ -1,4 +1,4 @@
-﻿---
+---
 name: release-management
 description: |
   Owns the end-to-end release process for Hedge Edge: Electron desktop app, MT5 EA,
@@ -44,7 +44,7 @@ Before any release proceeds, validate:
 - All CI checks pass on the release branch (unit tests, integration tests, linting)
 - No open P0 or P1 bugs tagged with the release milestone
 - Code review approved on all PRs in the release
-- Sentry error rate on the current version is at baseline (no unresolved spikes)
+- console logging (console logging later) error rate on the current version is at baseline (no unresolved spikes)
 
 **Hedge Safety Audit**:
 - If the release touches hedge execution code (trade event loop, order placement, position sync):
@@ -102,13 +102,13 @@ Generate changelog from conventional commits since the last release:
 
 **Canary Phase** (first 4 hours):
 - Deploy to 5% of users (selected by Supabase user cohort - prefer users with lower account values and fewer active hedges)
-- Monitor Sentry for new crashes, error rate spikes, and hedge failure events
+- Monitor console logging (console logging later) for new crashes, error rate spikes, and hedge failure events
 - Monitor Supabase trade_events for hedge latency regression
 - Gate: No new P0/P1 issues and hedge success rate stays above 99.7%
 
 **Staged Phase** (next 24 hours):
 - Expand to 25%, then 50%, then 100% in 8-hour increments
-- Each expansion gated by the same Sentry and Supabase metrics
+- Each expansion gated by the same console logging (console logging later) and Supabase metrics
 - If any gate fails: pause rollout, investigate, and decide to fix-forward or rollback
 
 **Full Rollout**:
@@ -121,7 +121,7 @@ Generate changelog from conventional commits since the last release:
 Trigger a rollback if:
 - Hedge success rate drops below 99.5% (measured across all users in the rollout cohort)
 - P0 bug is confirmed in the new version with no immediate fix available
-- Sentry crash-free session rate drops below 99% for the new version
+- console logging (console logging later) crash-free session rate drops below 99% for the new version
 - 3 or more users report the same critical issue in Discord within 2 hours
 
 **Rollback Steps**:
@@ -140,8 +140,8 @@ After every release, maintain a 48-hour monitoring checklist:
 |---|---|---|---|
 | Hedge success rate | Supabase trade_events | Greater than 99.7% | Pause rollout, investigate |
 | p95 hedge latency | Supabase trade_events | Under 150ms | Performance investigation |
-| Crash-free sessions | Sentry | Greater than 99% | Rollback consideration |
-| New error types | Sentry | 0 new unhandled errors | Triage immediately |
+| Crash-free sessions | console logging (console logging later) | Greater than 99% | Rollback consideration |
+| New error types | console logging (console logging later) | 0 new unhandled errors | Triage immediately |
 | Broker disconnect recovery | Supabase connection_logs | Under 5s average | Connectivity investigation |
 | Discord sentiment | Discord bot monitoring | No spike in negative messages | Investigate reports |
 | Auto-update success | Electron telemetry | Greater than 95% of users updated in 24h | Check update server |
@@ -168,21 +168,8 @@ After every release, maintain a 48-hour monitoring checklist:
 
 - GitHub API (GITHUB_TOKEN): Create releases, upload artifacts, manage release branches, publish changelogs
 - Electron Auto-Update (ELECTRON_UPDATE_URL): Manage version manifest, rollout percentages, platform builds
-- Sentry (SENTRY_DSN): Monitor crash-free rate, new errors, error trends per release
+- console logging (console logging later) (# console logging (console logging later)_DSN (skipped for now)): Monitor crash-free rate, new errors, error trends per release
 - Supabase (SUPABASE_URL, SUPABASE_KEY): Query trade_events for hedge metrics, connection_logs for broker stability, user cohort selection for canary
 - Vercel (VERCEL_TOKEN): Deploy changelog page updates to landing site
 - Discord Bot (DISCORD_BOT_TOKEN): Post release announcements, pre-release previews, rollback notifications
-- n8n (N8N_WEBHOOK_URL): Trigger build pipelines, notify on release completion, automate Notion status updates
-
-## Quality Checks
-
-- [ ] No release ships without passing all CI checks and hedge simulation tests
-- [ ] Release timing avoids London/NY overlap, Fridays, and major news events
-- [ ] Changelog is written in trader-friendly language, not developer jargon
-- [ ] Staged rollout starts at 5% canary and gates on hedge success rate and crash-free rate
-- [ ] Rollback procedure is tested quarterly to ensure the version manifest swap works
-- [ ] EA version compatibility is validated against the Electron app version before release
-- [ ] Post-release monitoring runs for 48 hours with documented metric checks
-- [ ] Every release has a Discord announcement posted within 1 hour of going live
-- [ ] Auto-update is deferred if the user has active hedges (update queued until hedges close)
-- [ ] Previous stable version is retained as rollback target for at least 2 weeks
+- Local automation scripts deployed to Railway

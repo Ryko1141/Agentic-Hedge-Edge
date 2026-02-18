@@ -57,7 +57,7 @@ When a trader opens a position on a prop firm evaluation account, Hedge Edge **i
 | Trade Execution | MT5 Expert Advisor (**live**), MT4 EA (*coming soon*), cTrader (*coming soon*) |
 | Auth & Database | Supabase |
 | Payments | Creem.io |
-| Landing Page | Vercel ([hedgeedge.io](https://hedgeedge.io)) |
+| Landing Page | Vercel ([hedgeedge.info](https://hedgeedge.info)) |
 | Community | Discord |
 | Automation | n8n |
 
@@ -65,7 +65,7 @@ When a trader opens a position on a prop firm evaluation account, Hedge Edge **i
 
 | Stream | Details |
 |--------|---------|
-| **SaaS Subscriptions** | Free Guide → Starter ($29/mo) → Pro ($30/mo) → Hedger ($75/mo) |
+| **SaaS Subscriptions** | Free Guide → Challenge Shield ($29/mo) → Multi-Challenge ($59/mo) → Unlimited ($99/mo) |
 | **IB Commissions** | Per-lot rebates from Vantage and BlackBull on referred hedge accounts |
 | **Free Tier Funnel** | Free hedge guide + Discord community → educate → convert to paid |
 
@@ -271,17 +271,32 @@ Manages the product roadmap, triages bugs, synthesises user feedback, plans rele
 Orchestrator Hedge Edge/
 │
 ├── .github/agents/              # Agent definitions (.agent.md files)
-├── .vscode/                     # Workspace settings & skill discovery config
+├── .vscode/                     # Workspace settings, tasks & skill discovery
+├── .env                         # Live API keys (git-ignored)
 ├── .env.example                 # All required API keys (template)
+│
+├── shared/                      # Shared Python package — API clients & access control
+│   ├── api_registry.py          # Central API→Agent access control matrix
+│   ├── notion_client.py         # Notion ERP (27 databases, RBAC)
+│   ├── supabase_client.py       # Supabase auth, users, subscriptions
+│   ├── discord_client.py        # Discord bot messaging & moderation
+│   ├── resend_client.py         # Resend email campaigns & audiences
+│   ├── youtube_client.py        # YouTube uploads, analytics, channel mgmt
+│   ├── instagram_client.py      # Instagram posts, reels, carousels, insights
+│   ├── linkedin_client.py       # LinkedIn posts, articles, images
+│   ├── calcom_client.py         # Cal.com scheduling & bookings
+│   ├── github_client.py         # GitHub repos, issues, PRs, releases
+│   ├── vercel_client.py         # Vercel deployments & domains
+│   ├── gsheets_client.py        # Google Sheets read/write/append
+│   ├── gocardless_client.py     # GoCardless payments & mandates
+│   ├── creem_client.py          # Creem.io subscriptions & checkouts
+│   └── linkedin_refresh.py      # LinkedIn token auto-refresh
 │
 ├── Orchestrator Agent/          # Task routing, multi-agent coordination
 │   └── .agents/skills/          # 4 skills
 │
 ├── Business Strategist Agent/   # Strategy, growth, competitive intel
-│   ├── .agents/skills/          # 6 skills + execution scripts
-│   ├── agents/SKILLS.md         # ASE framework reference
-│   ├── SOP.md                   # Operating guide
-│   └── tmp/                     # Scratch space
+│   └── .agents/skills/          # 6 skills
 │
 ├── Content Engine Agent/        # YouTube, Instagram, LinkedIn, content
 │   └── .agents/skills/          # 6 skills
@@ -308,10 +323,46 @@ Orchestrator Hedge Edge/
 │   ├── hedge-edge-business-context.md
 │   └── IB agreement/            # Product repos (front-end, back-end, landing page)
 │
-└── assets/                      # Shared assets (logo, images)
+├── assets/                      # Shared assets (logo, images)
+│
+├── scripts/                     # Operational utility scripts
+│   ├── final_verify.py          # End-to-end smoke test of all systems
+│   ├── check_health.py          # Service health check
+│   ├── cf_*.py                  # Cloudflare hardening & security
+│   ├── discord_*.py             # Discord server setup & management
+│   ├── shortio_manage.py        # Short.io URL management
+│   ├── notion_check_dbs.py      # Notion DB connectivity check
+│   └── output/                  # Script output files (git-ignored)
+│
+└── _archive/                    # Retired test/setup scripts
 ```
 
-**Total: 9 agents · 52 skills · Deterministic execution scripts**
+**Total: 9 agents · 52 skills · 17 API clients · 16 connected services**
+
+---
+
+## API Access Matrix
+
+Each agent only accesses the APIs it needs. Access levels: **full** (read+write+admin), **write** (read+write), **read** (queries only).
+
+| API | Orchestrator | Biz Strategist | Content Engine | Marketing | Sales | Finance | Community Mgr | Analytics | Product |
+|-----|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Notion** | full | full | full | full | full | full | full | full | full |
+| **Supabase** | read | — | — | — | read | read | read | read | full |
+| **Cal.com** | read | — | — | — | full | — | — | — | — |
+| **Discord** | write | — | read | write | — | — | full | — | write |
+| **Resend** | read | — | — | full | write | — | write | — | — |
+| **YouTube** | — | — | full | read | — | — | — | read | — |
+| **Instagram** | — | — | full | write | — | — | — | read | — |
+| **LinkedIn** | — | read | full | write | — | — | — | read | — |
+| **GitHub** | read | — | — | — | — | — | — | read | full |
+| **Vercel** | — | — | — | write | — | — | — | read | full |
+| **Google Sheets** | — | read | — | — | write | full | — | full | — |
+| **GoCardless** | — | — | — | — | — | full | — | read | — |
+| **Creem.io** | — | — | — | — | read | full | — | read | — |
+| **Railway** | read | — | — | — | — | — | — | read | full |
+| **Short.io** | read | — | write | full | write | — | — | read | — |
+| **Cloudflare** | read | — | — | — | — | — | — | read | full |
 
 ---
 
@@ -383,11 +434,11 @@ The Orchestrator handles all routing, parallelisation, and result aggregation au
 
 | Metric | Value |
 |--------|-------|
-| Active beta users | ~500 |
+| Stage | Pre-launch (building towards first users) |
 | Live platform | MT5 Expert Advisor |
 | Coming soon | MT4 EA, cTrader integration |
 | IB partnerships | 2 signed (Vantage, BlackBull) |
-| Subscription tiers | 4 (Free, Starter, Pro, Hedger) |
+| Subscription tiers | 4 (Free, Challenge Shield $29/mo, Multi-Challenge $59/mo, Unlimited $99/mo) |
 | Company | Hedge Edge Ltd — London, UK |
 
 ---

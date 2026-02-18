@@ -1,4 +1,4 @@
-﻿---
+---
 name: ad-campaigns
 description: |
   Plan, launch, optimise, and report on paid advertising campaigns across Google Ads
@@ -71,7 +71,7 @@ Acquire new Hedge Edge trial users and paid subscribers through profitable paid 
 ### 3. Campaign Setup
 - **Google Ads** (via GOOGLE_ADS_API_KEY):
   - Create campaign with specified id_strategy and daily_budget.
-  - Set up conversion tracking: Creem.io checkout completion + trial signup (Supabase event  Google Ads conversion import via n8n).
+  - Set up conversion tracking: Creem.io checkout completion + trial signup (Supabase event  Google Ads conversion import via local automation scripts (Railway)).
   - Enable ad extensions: sitelinks (Pricing, How It Works, Discord Community), callout (14-Day Free Trial, No Card Required).
   - Set ad schedule: 06:00-23:00 in target timezones (traders are active outside market hours for setup/management).
 - **Meta Ads** (via META_ADS_TOKEN):
@@ -102,8 +102,8 @@ Acquire new Hedge Edge trial users and paid subscribers through profitable paid 
 - Primary conversion: Creem.io checkout event (trial signup or paid subscription).
 - Secondary conversions: Landing page CTA click, "Start Free Trial" button click, pricing page visit.
 - Attribute conversions using:
-  - Google Ads conversion import (n8n webhook: Supabase trial event  Google Ads API).
-  - Meta CAPI server-side events (n8n webhook: Supabase trial event  Meta Conversions API).
+  - Google Ads conversion import (Railway-hosted automation script: Supabase trial event  Google Ads API).
+  - Meta CAPI server-side events (Railway-hosted automation script: Supabase trial event  Meta Conversions API).
   - GA4 cross-channel attribution (GA4_MEASUREMENT_ID).
 - Calculate CAC per campaign: total spend / total paid conversions.
 - Calculate 90-day ROAS: LTV of acquired cohort / ad spend for that cohort.
@@ -136,7 +136,7 @@ Acquire new Hedge Edge trial users and paid subscribers through profitable paid 
 | Meta Ads | META_ADS_TOKEN | Campaign CRUD, audience management, CAPI events, creative upload, reporting |
 | GA4 | GA4_MEASUREMENT_ID | Cross-channel attribution, audience export for retargeting |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | User segment export for Custom Audiences, conversion event source |
-| n8n | N8N_WEBHOOK_URL | Relay conversion events to ad platforms, automate weekly reporting |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Relay conversion events to ad platforms, automate weekly reporting |
 | Creem.io | CREEM_API_KEY | Primary conversion event source (checkout, subscription) |
 | Notion | NOTION_API_KEY | Campaign calendar, performance logs, creative library |
 | Vercel | VERCEL_TOKEN | Landing page variant deployment for campaign-specific URLs |

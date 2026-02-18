@@ -1,4 +1,4 @@
-﻿---
+---
 name: seo-strategy
 description: |
   Plan and execute an organic search strategy for Hedge Edge targeting prop-firm traders
@@ -197,7 +197,7 @@ Check via Google Search Console (SEARCH_CONSOLE_KEY) and Lighthouse:
 | Vercel | VERCEL_TOKEN | Deploy on-page fixes, update meta tags, add schema markup |
 | Notion | NOTION_API_KEY | SEO dashboard, content briefs, audit logs, rank tracking reports |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Organic-originated trial events for conversion attribution |
-| n8n | N8N_WEBHOOK_URL | Automate monthly rank tracking pulls, alert on ranking drops |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Automate monthly rank tracking pulls, alert on ranking drops |
 
 ## Quality Checks
 
@@ -210,7 +210,7 @@ Check via Google Search Console (SEARCH_CONSOLE_KEY) and Lighthouse:
 - [ ] Schema markup validates without errors in Rich Results Test
 - [ ] Rank tracking report is produced monthly and logged in Notion
 - [ ] Keywords in positions 4-10 are prioritised for quick-win optimization each month
-- [ ] No broken internal links (404 check runs weekly via n8n automation)
+- [ ] No broken internal links (404 check runs weekly via local automation (Railway-deployed))
 - [ ] Backlink acquisition uses only white-hat methods
 - [ ] Content briefs are delivered to Content Engine Agent within 48h of keyword approval
 - [ ] Organic traffic month-over-month growth  10% (ramp phase)

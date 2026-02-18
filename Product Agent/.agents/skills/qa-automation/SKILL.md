@@ -1,4 +1,4 @@
-﻿---
+---
 name: qa-automation
 description: |
   Designs and maintains the test strategy for Hedge Edge across unit tests, integration
@@ -52,7 +52,7 @@ Guarantee that every Hedge Edge release meets the reliability bar required for s
 - Headless Electron app running the full main process (Node.js trade event loop)
 - Mock renderer for UI interaction tests (Playwright or Spectron)
 - Isolated Supabase project for test data (separate from production)
-- Sentry test DSN to validate error reporting without polluting production dashboards
+- console logging (console logging later) test DSN to validate error reporting without polluting production dashboards
 
 **CI Integration**:
 - Unit tests run on every commit (GitHub Actions, under 2 minutes)
@@ -97,10 +97,10 @@ Target: Cover every communication boundary
 - Feature flag changes in Supabase propagate to the Electron app within 30 seconds.
 - Connection status changes (broker connect/disconnect) are logged in real-time.
 
-**Electron-to-Sentry Integration**:
+**Electron-to-console logging (console logging later) Integration**:
 - Unhandled exceptions in main process are captured with correct release version tag.
 - Breadcrumbs include the last 5 trade events before the error (for debugging context).
-- Performance transactions are created for hedge execution (to track latency in Sentry).
+- Performance transactions are created for hedge execution (to track latency in console logging (console logging later)).
 
 #### E2E Hedge Simulation Tests
 Target: 99.7% hedge success rate across 1000 simulated trades
@@ -167,7 +167,7 @@ Target: System stable with 10 concurrent accounts, 50 trades per second aggregat
 - Test suite name, run time, pass/fail counts
 - Hedge success rate (for simulation tests)
 - Latency percentiles: p50, p90, p95, p99
-- Any new failures with stack traces and Sentry event IDs
+- Any new failures with stack traces and console logging (console logging later) event IDs
 - Coverage diff since last run (for unit tests)
 
 **Dashboard** (Notion):
@@ -208,21 +208,5 @@ When a P0/P1 bug is fixed:
 
 - GitHub API (GITHUB_TOKEN): Trigger CI workflows, read test results from Actions, post coverage to PRs, manage test-related issues
 - Supabase (SUPABASE_URL, SUPABASE_KEY): Test project for trade event validation, feature flag testing, user profile fixtures
-- Sentry (SENTRY_DSN): Test DSN for validating error capture behavior, performance transaction validation
-- n8n (N8N_WEBHOOK_URL): Trigger nightly test runs, aggregate results across test suites, alert on failures
-- Electron Auto-Update (ELECTRON_UPDATE_URL): Test update flow with a staging update server
-- MetaTrader Manager API (MT_MANAGER_API_KEY, future): Manage demo account state, push test EA configurations
-
-## Quality Checks
-
-- [ ] Unit test coverage is 90% or higher on hedge-core modules
-- [ ] Every PR touching hedge execution code has passing integration tests before merge
-- [ ] E2E hedge simulation runs nightly with results posted to Notion by 07:00 EST
-- [ ] Hedge success rate in simulation has not dropped below 99.7% in the last 30 days
-- [ ] p95 hedge latency in simulation stays under 150ms
-- [ ] Every P0/P1 bug fix includes a regression test that proves the fix
-- [ ] Test flakiness rate is under 2% (flaky tests are quarantined within 48 hours)
-- [ ] Load tests confirm stability at 10 concurrent accounts before every major release
-- [ ] Demo account credentials are rotated quarterly and never appear in test code
-- [ ] Platform-specific test suites exist and pass before any platform reaches open beta phase
-- [ ] Test data is cleaned up after every run (no orphaned positions on demo accounts)
+- console logging (console logging later) (# console logging (console logging later)_DSN (skipped for now)): Test DSN for validating error capture behavior, performance transaction validation
+- Local automation scripts deployed to Railway

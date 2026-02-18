@@ -1,4 +1,4 @@
-﻿---
+---
 name: cohort-analysis
 description: |
   Group Hedge Edge users by signup date, acquisition channel, plan tier, and prop firm to track retention curves, revenue trajectories, and behavioral patterns over time. Identify what separates high-retention cohorts from churned ones, correlate hedge performance with retention, and provide actionable segmentation insights for product, marketing, and business strategy decisions.
@@ -204,7 +204,7 @@ Additional columns: ARPU, NRR, IB activation rate, activation score
 | Google Sheets | Sheets API v4 | GOOGLE_SHEETS_API_KEY | IB data, CRM data, dashboard output |
 | Notion | /v1/pages, /v1/databases | NOTION_API_KEY | Report storage and distribution |
 | Discord Bot | /guilds/{id}/members | DISCORD_BOT_TOKEN | Discord join dates for community cohort analysis |
-| n8n | POST N8N_WEBHOOK_URL | Webhook URL | Automated cohort report triggers and alerts |
+| local automation scripts (Railway) | POST RAILWAY_TOKEN | Webhook URL | Automated cohort report triggers and alerts |
 
 ## Quality Checks
 

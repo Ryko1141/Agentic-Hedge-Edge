@@ -1,4 +1,4 @@
-﻿---
+---
 name: support-triage
 description: |
   Classifies, prioritizes, and routes incoming support requests from Discord and other channels  resolving common issues with FAQ deflection, escalating technical bugs to Engineering, broker issues to Business Strategy, and billing disputes to Finance, while maintaining SLA targets for Hedge Edge users.
@@ -92,7 +92,7 @@ When a support request arrives, classify using this decision tree:
 | Free | < 30 minutes | < 24 hours (non-critical), < 2 hours (critical) | Auto-flag if response > 1 hour |
 | Active hours | 08:0022:00 UTC | Outside active hours: acknowledge + commit to next-morning resolution |  |
 
-**SLA monitoring**: n8n workflow checks Supabase support_tickets table every 5 minutes. Tickets approaching SLA breach trigger alert in internal #community-ops channel.
+**SLA monitoring**: Python/Node automation script checks Supabase support_tickets table every 5 minutes. Tickets approaching SLA breach trigger alert in internal #community-ops channel.
 
 ### 3. Incident Detection (Multi-User Issue)
 
@@ -206,7 +206,7 @@ Every Monday, generate and post to Notion + internal Discord:
 |---|---|---|
 | Discord Bot API | DISCORD_BOT_TOKEN | Message monitoring, auto-responses, FAQ bot, incident status posts, DM support |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Ticket storage, SLA tracking, incident records, user tier lookup, trade log access |
-| n8n | N8N_WEBHOOK_URL | SLA monitoring workflow, escalation routing, incident detection pipeline, dunning triggers |
+| local automation scripts (Railway) | RAILWAY_TOKEN | SLA monitoring workflow, escalation routing, incident detection pipeline, dunning triggers |
 | Notion API | NOTION_API_KEY | FAQ/knowledge base hosting, weekly report publishing, incident post-mortem docs |
 | Discord Webhook | DISCORD_WEBHOOK_URL | Incident status updates in #announcements, SLA breach alerts in #community-ops |
 | Crisp / Intercom | SUPPORT_API_KEY | Help desk ticket management, live chat widget (future  when implemented, becomes primary ticketing system) |

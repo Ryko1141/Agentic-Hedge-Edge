@@ -1,0 +1,41 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Final Verification",
+			"type": "shell",
+			"command": ".venv\\Scripts\\python.exe scripts\\final_verify.py",
+			"detail": "End-to-end smoke test of all infrastructure systems"
+		},
+		{
+			"label": "Health Check",
+			"type": "shell",
+			"command": ".venv\\Scripts\\python.exe scripts\\check_health.py",
+			"detail": "Check status of all connected services"
+		},
+		{
+			"label": "Cloudflare Harden (dry-run)",
+			"type": "shell",
+			"command": ".venv\\Scripts\\python.exe -m shared.cloudflare_harden",
+			"detail": "Audit Cloudflare security settings without applying changes"
+		},
+		{
+			"label": "Cloudflare Harden (apply)",
+			"type": "shell",
+			"command": ".venv\\Scripts\\python.exe scripts\\cf_run_harden.py",
+			"detail": "Run Cloudflare hardening with auto-apply if zone settings are accessible"
+		},
+		{
+			"label": "Cloudflare Minify + Harden",
+			"type": "shell",
+			"command": ".venv\\Scripts\\python.exe scripts\\cf_run_minify_and_harden.py",
+			"detail": "Re-apply minification and run full hardening audit"
+		},
+		{
+			"label": "Notion DB Check",
+			"type": "shell",
+			"command": ".venv\\Scripts\\python.exe scripts\\notion_check_dbs.py",
+			"detail": "Verify connectivity to all 26 Notion ERP databases"
+		}
+	]
+}

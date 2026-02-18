@@ -1,7 +1,7 @@
-﻿---
+---
 name: bug-triage
 description: |
-  Classifies, prioritizes, and routes bug reports for Hedge Edge from Sentry crash data,
+  Classifies, prioritizes, and routes bug reports for Hedge Edge from console logging (console logging later) crash data,
   Discord community reports, and in-app feedback. Uses a severity matrix calibrated for
   trading software where unhedged exposure is the ultimate P0. Manages the full bug lifecycle
   from intake through fix verification and post-mortem documentation.
@@ -15,7 +15,7 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 
 ## When to Use This Skill
 
-- A new Sentry alert fires (crash, unhandled exception, or error rate spike in the Electron app or MT5 EA)
+- A new console logging (console logging later) alert fires (crash, unhandled exception, or error rate spike in the Electron app or MT5 EA)
 - A user posts in the Discord bug-reports channel describing unexpected behavior
 - In-app feedback submissions in Supabase contain error descriptions or negative sentiment
 - A developer discovers a bug during feature work and needs it prioritized
@@ -26,12 +26,12 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| source | enum | Yes | sentry, discord, in_app_feedback, developer, post_release_monitor |
-| raw_report | string | Yes | The original bug report text, Sentry event JSON, or feedback submission |
+| source | enum | Yes | console logging (console logging later), discord, in_app_feedback, developer, post_release_monitor |
+| raw_report | string | Yes | The original bug report text, console logging (console logging later) event JSON, or feedback submission |
 | affected_component | string | No | electron-main, electron-renderer, mt5-ea, mt4-ea, ctrader-cbot, supabase, landing-page, auto-updater |
 | user_id | string | No | Supabase user ID or Discord username for follow-up |
 | reproduction_steps | string | No | Steps to reproduce if provided by reporter |
-| sentry_event_id | string | For Sentry sources | Sentry event ID for deep linking |
+| console logging (console logging later)_event_id | string | For console logging (console logging later) sources | console logging (console logging later) event ID for deep linking |
 | hedge_state_at_time | string | No | Was the user in an active hedge? How many accounts? What pairs? |
 
 ## Step-by-Step Process
@@ -39,7 +39,7 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 ### 1. Bug Intake and Deduplication
 - Parse the raw report to extract: symptoms, affected component, frequency, and user context
 - Search existing GitHub Issues for duplicates using title keywords and component labels
-- Search Sentry for related events by stack trace fingerprint
+- Search console logging (console logging later) for related events by stack trace fingerprint
 - If duplicate found: add the new report as a comment on the existing issue, increment the reports count, and escalate priority if the report count crosses a threshold (3+ unique users = bump priority)
 - If new: proceed to classification
 
@@ -75,7 +75,7 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 
 ### 3. Impact Assessment
 - **Active Hedge Impact**: Was the bug triggered while a hedge was active? If yes, auto-escalate one severity level.
-- **User Count**: How many users are affected? Check Sentry event count and Supabase error logs.
+- **User Count**: How many users are affected? Check console logging (console logging later) event count and Supabase error logs.
   - 1 user with unique environment: likely environmental, investigate before prioritizing
   - 3-10 users: confirmed bug, prioritize per severity
   - 10+ users: potential systemic issue, trigger incident response
@@ -94,14 +94,14 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
   - Broker name and server (e.g., Vantage-Live3, BlackBull-Demo)
   - Network conditions (VPS vs. local, ping to broker server)
   - Supabase user profile and subscription tier
-  - Sentry breadcrumbs and stack trace
+  - console logging (console logging later) breadcrumbs and stack trace
 
 ### 5. GitHub Issue Creation
 - Title format: [P-severity] [component] concise description
   - Example: [P0] [mt5-ea] Hedge order rejected when broker returns requote during high volatility
   - Example: [P2] [electron-renderer] Dashboard position card shows NaN for lot size on partial close
 - Labels: severity (p0-critical, p1-high, p2-medium, p3-low), component, bug, regression (if applicable)
-- Body includes: description, reproduction steps, expected vs actual behavior, diagnostic data, affected users count, Sentry link, and hedge safety implications
+- Body includes: description, reproduction steps, expected vs actual behavior, diagnostic data, affected users count, console logging (console logging later) link, and hedge safety implications
 - Assign to the appropriate developer based on component ownership
 - Link to Discord thread if reported by a user (so they get updates)
 
@@ -114,7 +114,7 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 - Every P2/P3 fix requires:
   - Unit test covering the failure case
   - Manual verification before merge
-- Close the Sentry issue when the fix is deployed and confirmed stable for 48 hours
+- Close the console logging (console logging later) issue when the fix is deployed and confirmed stable for 48 hours
 
 ### 7. Post-Mortem (P0 Only)
 - Write a post-mortem document in Notion with:
@@ -137,7 +137,7 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 
 ## API and Platform Requirements
 
-- Sentry (SENTRY_DSN): Query events, issues, and error trends; resolve issues on fix deployment; track release health
+- console logging (console logging later) (# console logging (console logging later)_DSN (skipped for now)): Query events, issues, and error trends; resolve issues on fix deployment; track release health
 - GitHub API (GITHUB_TOKEN): Create/update issues, manage labels, link PRs to issues, query issue history for deduplication
 - Supabase (SUPABASE_URL, SUPABASE_KEY): Query error logs, user profiles (correlate bugs with subscription tier and broker config), feedback submissions
 - Discord Bot (DISCORD_BOT_TOKEN): Monitor bug-reports channel, post incident alerts to incidents, notify users when their reported bug is fixed
@@ -148,7 +148,7 @@ Ensure no Hedge Edge bug that could cause trader financial harm goes undetected,
 - [ ] Every bug report is triaged and classified within 2 hours of detection
 - [ ] P0 bugs have an acknowledged owner and active investigation within 30 minutes
 - [ ] No P0/P1 bug is closed without a regression test covering the exact failure scenario
-- [ ] Sentry issue is linked in every GitHub bug issue where applicable
+- [ ] console logging (console logging later) issue is linked in every GitHub bug issue where applicable
 - [ ] Bug-to-fix cycle time is tracked: P0 under 24 hours, P1 under 72 hours, P2 under 2 weeks
 - [ ] Weekly bug backlog review confirms no stale issues (open over 30 days without activity)
 - [ ] Post-mortems are written for every P0 within 48 hours of resolution

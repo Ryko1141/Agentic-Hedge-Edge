@@ -15,7 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 def load_competitor_profiles() -> dict:
     """Load competitor profiles from resources."""
@@ -187,6 +191,8 @@ def main():
     
     output_json = json.dumps(result, indent=2)
     
+    log_task("Business Strategist", f"Competitive intelligence: {args.action}", "Done", "Medium", output_json[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

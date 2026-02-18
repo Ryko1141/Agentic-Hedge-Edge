@@ -1,0 +1,7 @@
+﻿# Hedge Edge  IB Commission Tracking Dependencies
+# Install: pip install -r requirements.txt
+#          playwright install chromium
+
+playwright>=1.40.0
+python-dotenv>=1.0.0
+pandas>=2.1.0

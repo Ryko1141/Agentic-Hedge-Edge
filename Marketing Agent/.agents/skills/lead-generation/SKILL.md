@@ -1,4 +1,4 @@
-﻿---
+---
 name: lead-generation
 description: |
   Identify, score, enrich, and segment prospective Hedge Edge users from all inbound and
@@ -94,9 +94,9 @@ Apply a points-based scoring model:
 - If uto_route is true:
   - Cold  add to Newsletter Management skill queue.
   - Warm  trigger Email Marketing skill with campaign_type: conversion_drip.
-  - Hot  send n8n webhook to alert founder + trigger high-priority welcome sequence.
+  - Hot  send Railway-hosted automation script to alert founder + trigger high-priority welcome sequence.
   - IB-warm  trigger Email Marketing skill with campaign_type: ib_referral.
-- Sync all segments to Google Sheets CRM via n8n for manual review.
+- Sync all segments to Google Sheets CRM via local automation scripts (Railway) for manual review.
 
 ### 7. Pipeline Hygiene (Weekly)
 - Re-score all leads based on latest interaction data (email opens, site visits, Discord activity).
@@ -110,7 +110,7 @@ Apply a points-based scoring model:
 |---|---|---|
 | Scored lead records | JSON array [{ email, name, score, segment, enrichment_data, source }] | Supabase leads table |
 | Pipeline summary | JSON { total_leads, cold_count, warm_count, hot_count, new_this_week, score_distribution } | Google Sheets CRM + Notion |
-| Hot lead alerts | Webhook payload { email, name, score, top_signals } | n8n  founder notification (Discord/email) |
+| Hot lead alerts | Webhook payload { email, name, score, top_signals } | local automation scripts (Railway)  founder notification (Discord/email) |
 | Segment sync | CSV export | Google Sheets CRM |
 | Routing actions | Trigger payloads | Email Marketing skill, Newsletter Management skill |
 
@@ -122,7 +122,7 @@ Apply a points-based scoring model:
 | GA4 | GA4_MEASUREMENT_ID | Pull session data, page views, CTA events for landing page visitors |
 | Google Ads | GOOGLE_ADS_API_KEY | Fetch lead form submissions, click data, conversion events |
 | Meta Ads | META_ADS_TOKEN | Fetch lead form submissions, audience overlap reports |
-| n8n | N8N_WEBHOOK_URL | Route hot-lead alerts, sync CRM, trigger email sequences |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Route hot-lead alerts, sync CRM, trigger email sequences |
 | Notion | NOTION_API_KEY | Update pipeline dashboard, log weekly hygiene reports |
 | Creem.io | CREEM_API_KEY | Match leads to checkout events for conversion attribution |
 

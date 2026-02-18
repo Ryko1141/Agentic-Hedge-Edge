@@ -1,7 +1,7 @@
-﻿---
+---
 name: crm-management
 description: |
-  Maintains the Hedge Edge sales CRM (Google Sheets + Notion) via n8n automation.
+  Maintains the Hedge Edge sales CRM (Google Sheets + Notion) via local automation (Railway-deployed).
   Logs every lead interaction, manages deal stages, syncs Supabase subscription data,
   and ensures a single source of truth for all sales activity.
 ---
@@ -87,7 +87,7 @@ payment_data:                             # required for sync_payment
 2. Generate a unique lead_id (format: HE-LEAD-{YYYYMMDD}-{4-digit-seq}).
 3. Append a new row to the Google Sheets "Leads" tab with all fields plus created_at timestamp.
 4. If classification  MQL, also create a Notion page in the "Sales Pipeline" database with properties: Lead Name, Score, Stage (= classification), Tier Recommendation, Prop Firms, Account Count, Source, Created Date.
-5. Trigger n8n webhook for any downstream automations (e.g., Slack notification to sales channel).
+5. Trigger Railway-hosted automation script for any downstream automations (e.g., Slack notification to sales channel).
 
 **update_lead:**
 1. Fetch current row, merge new data (never overwrite with null).
@@ -108,7 +108,7 @@ payment_data:                             # required for sync_payment
    - 
 ew_lead  qualified  discovery_call_booked  demo_scheduled  demo_completed  proposal_sent  
 egotiation  closed_won | closed_lost
-4. If closed_won: update with tier, MRR value, and IB status; trigger n8n celebration webhook.
+4. If closed_won: update with tier, MRR value, and IB status; trigger local automation scripts (Railway) celebration webhook.
 5. If closed_lost: log the loss reason (price, timing, no need, competitor, went silent) for win/loss analysis.
 
 **sync_subscription:**
@@ -121,7 +121,7 @@ egotiation  closed_won | closed_lost
 1. Receive Creem.io webhook payload.
 2. Map the payment event to the CRM lead (match by email).
 3. Update payment fields: last_payment_date, payment_status, lifetime_value (cumulative).
-4. If payment_failed, trigger n8n workflow for dunning sequence and alert the Sales Agent for save outreach.
+4. If payment_failed, trigger Python/Node automation script for dunning sequence and alert the Sales Agent for save outreach.
 5. If subscription_cancelled, move deal to churned stage and log the churn reason.
 
 **bulk_hygiene:**
@@ -148,7 +148,7 @@ crm_result:
   google_sheets_row_number: integer
   notion_page_updated: boolean
   notion_page_id: string | null
-  n8n_webhook_triggered: boolean
+  local automation scripts (Railway)_webhook_triggered: boolean
   data_conflicts_resolved: list[string]   # e.g. ["Email mismatch resolved: used Supabase value"]
   warnings: list[string]                  # e.g. ["Lead has no email  Discord-only contact"]
   summary: string                         # human-readable one-line summary
@@ -160,7 +160,7 @@ crm_result:
 |---|---|---|
 | Google Sheets | GOOGLE_SHEETS_API_KEY | Read, append, update rows across Leads and Interaction Log tabs |
 | Notion | NOTION_API_KEY | Create/update pages in Sales Pipeline database; query for existing deals |
-| n8n | N8N_WEBHOOK_URL | Trigger CRM sync workflows, stage-change notifications, dunning sequences |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger CRM sync workflows, stage-change notifications, dunning sequences |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Query user profiles, subscription status, usage telemetry |
 | Creem.io | CREEM_API_KEY | Verify payment status, retrieve subscription details |
 | Discord Bot | DISCORD_BOT_TOKEN | Resolve discord_handle to user ID for deduplication |
@@ -170,7 +170,7 @@ crm_result:
 - [ ] Every sales interaction is logged within 5 minutes of occurrence  no orphaned touchpoints.
 - [ ] Lead records are never duplicated; dedup runs on every create and bulk hygiene sweep.
 - [ ] Stage transitions are sequential and logged with timestamps and reasons.
-- [ ] Supabase subscription data and CRM data agree; discrepancies trigger an alert via n8n.
+- [ ] Supabase subscription data and CRM data agree; discrepancies trigger an alert via local automation scripts (Railway).
 - [ ] Creem.io payment events are matched to CRM leads within 60 seconds of webhook receipt.
 - [ ] Stale leads (30+ days no contact, not closed) are flagged weekly for review.
 - [ ] All MQL+ leads have corresponding Notion deal cards  verified on every bulk hygiene run.

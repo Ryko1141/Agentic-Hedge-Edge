@@ -15,6 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 def calculate_retention_health(mrr: float, users: int, churn: float) -> dict:
@@ -239,6 +244,8 @@ def main():
             print(f"\n[{issue['severity'].upper()}] {issue['issue']}")
             print(f"  Impact: {issue['impact']}")
     
+    log_task("Business Strategist", f"Retention analysis: {args.action}", "Done", "Medium", json.dumps(result, default=str)[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

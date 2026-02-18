@@ -1,4 +1,4 @@
-﻿---
+---
 name: funnel-analytics
 description: |
   Map and measure the complete Hedge Edge user journey from first touch through retention and referral. Track conversion rates, drop-off points, and revenue impact at every funnel stage: Content  Attention  Capture  Sales  Delivery  Retention  Analytics. Integrate data from GA4, Vercel Analytics, Supabase, Creem.io, Discord, and Google Sheets to identify the highest-leverage optimization points.
@@ -37,7 +37,7 @@ Identify exactly where Hedge Edge is losing potential revenue in the user journe
 | Field | Source | Description |
 |---|---|---|
 | discord_signups | Discord Bot + Supabase join | Users who joined Discord before/after signup (community influence measurement) |
-| email_events | n8n/email platform | Email sends, opens, clicks by campaign (for email funnel stages) |
+| email_events | local automation scripts (Railway)/email platform | Email sends, opens, clicks by campaign (for email funnel stages) |
 | ib_activations | Google Sheets CRM | IB broker activation events mapped to user journey |
 | support_tickets | Supabase/Google Sheets | Support interactions mapped to funnel stage (pre-sale vs. post-sale) |
 | segment_filter | Request parameter | Filter by channel, plan, prop firm, geography, device |
@@ -164,7 +164,7 @@ Build separate funnels for each acquisition channel:
    - Channel comparison table
    - Velocity analysis with benchmark compliance
    - Recommended actions with ICE scores
-4. If a conversion rate drops >15% WoW, trigger n8n alert
+4. If a conversion rate drops >15% WoW, trigger local automation scripts (Railway) alert
 
 ## Output Specification
 
@@ -228,7 +228,7 @@ Build separate funnels for each acquisition channel:
 | Google Sheets | Sheets API v4 | GOOGLE_SHEETS_API_KEY + service account | Dashboard output, CRM data for IB funnel |
 | Notion | /v1/pages | NOTION_API_KEY | Report storage and distribution |
 | Discord Bot | /guilds/{id}/members, /channels/{id}/messages | DISCORD_BOT_TOKEN | Community engagement funnel data |
-| n8n | POST to N8N_WEBHOOK_URL | Webhook URL | Alert triggers for conversion anomalies |
+| local automation scripts (Railway) | POST to RAILWAY_TOKEN | Webhook URL | Alert triggers for conversion anomalies |
 
 ## Quality Checks
 

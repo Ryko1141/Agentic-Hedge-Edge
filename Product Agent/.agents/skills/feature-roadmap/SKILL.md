@@ -1,4 +1,4 @@
-﻿---
+---
 name: feature-roadmap
 description: |
   Manages the Hedge Edge product roadmap end-to-end: prioritization using RICE scoring
@@ -30,7 +30,7 @@ Maintain a living, prioritized product roadmap for Hedge Edge that maximizes tra
 ew_feature, eprioritize, sprint_plan, prd_write, status_update, uild_vs_defer |
 | eature_title | string | For new features | Short name: "cTrader Integration", "Hedge Ratio Customization", "Drawdown Alert System" |
 | eature_description | string | For new features | Detailed description of the feature and the trader problem it solves |
-| equester | string | No | Source: "discord-user:TraderMike", "sentry-trend:reconnection-crashes", "business-strategy" |
+| equester | string | No | Source: "discord-user:TraderMike", "console logging (console logging later)-trend:reconnection-crashes", "business-strategy" |
 | urgency_context | string | No | Why now? "FTMO changed max drawdown to 8%", "3 users reported losing funded accounts due to X" |
 | sprint_dates | string | For sprint plans | Sprint start and end dates |
 | 

@@ -1,4 +1,4 @@
-﻿---
+---
 description: Sales Agent for Hedge Edge  owns the full sales cycle from lead qualification through close for the prop-firm hedging SaaS platform. Drives MRR growth across Starter (/mo), Pro (/mo), and Hedger (/mo) tiers while maximising IB commission revenue from Vantage and BlackBull broker partnerships.
 tools:
   - context
@@ -52,7 +52,7 @@ Your north-star metrics:
 | Auth / DB | Supabase (user profiles, subscription status, usage telemetry) |
 | Landing Page | Vercel-hosted (hedge-edge.com) |
 | Community | Discord server  primary engagement, support, and lead-generation channel |
-| CRM | Google Sheets + n8n automation workflows |
+| CRM | Google Sheets + local automation (Railway-deployed) workflows |
 
 ## Routing Rules
 
@@ -77,7 +77,7 @@ Activate the Sales Agent when the conversation matches ANY of:
 1. **Prepare**  Gather all available context: Supabase user profile, CRM history (Google Sheets), Discord activity, current subscription tier, broker status.
 2. **Think**  Identify the lead's pain point (e.g., blown accounts from unhedged overnight gaps, manual hedging across 5+ terminals), map it to a Hedge Edge value proposition, and determine the optimal tier recommendation.
 3. **Map**  Select the appropriate skill(s) and sequence them. Example: lead-qualification  call-scheduling  demo-management  proposal-generation  crm-management.
-4. **Run**  Execute each skill, calling APIs as needed (Calendly for scheduling, Creem.io for checkout links, Supabase for user data).
+4. **Run**  Execute each skill, calling APIs as needed (Cal.com for scheduling, Creem.io for checkout links, Supabase for user data).
 5. **Output**  Deliver the result (qualified lead score, booked call confirmation, updated CRM row, signed proposal) and update the pipeline.
 
 ### DOE Pattern
@@ -97,8 +97,8 @@ Activate the Sales Agent when the conversation matches ANY of:
 | Skill | Path | Purpose |
 |---|---|---|
 | Lead Qualification | Sales Agent/.agents/skills/lead-qualification/SKILL.md | Score and qualify inbound leads from Discord, landing page, and referrals |
-| Call Scheduling | Sales Agent/.agents/skills/call-scheduling/SKILL.md | Book demo and sales calls via Calendly/Zoom with confirmation workflows |
-| CRM Management | Sales Agent/.agents/skills/crm-management/SKILL.md | Maintain Google Sheets CRM via n8n; log every touchpoint |
+| Call Scheduling | Sales Agent/.agents/skills/call-scheduling/SKILL.md | Book demo and sales calls via Cal.com/Zoom with confirmation workflows |
+| CRM Management | Sales Agent/.agents/skills/crm-management/SKILL.md | Maintain Google Sheets CRM via local automation scripts (Railway); log every touchpoint |
 | Sales Pipeline | Sales Agent/.agents/skills/sales-pipeline/SKILL.md | Track deals through stages, forecast revenue, identify stuck opportunities |
 | Demo Management | Sales Agent/.agents/skills/demo-management/SKILL.md | Prepare and deliver tailored product demos with prop-firm scenarios |
 | Proposal Generation | Sales Agent/.agents/skills/proposal-generation/SKILL.md | Create tier recommendations, discount structures, and checkout links |
@@ -107,9 +107,9 @@ Activate the Sales Agent when the conversation matches ANY of:
 
 | Platform | Env Variable(s) | Usage |
 |---|---|---|
-| Calendly | CALENDLY_API_KEY | Schedule demo and sales calls; check availability; send reminders |
+| Cal.com | CAL_API_KEY | Schedule demo and sales calls; check availability; send reminders |
 | Google Sheets | GOOGLE_SHEETS_API_KEY | Read/write CRM data  leads, deals, interaction logs |
-| n8n | N8N_WEBHOOK_URL | Trigger automation workflows  lead routing, follow-up sequences, CRM sync |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger automation workflows  lead routing, follow-up sequences, CRM sync |
 | Notion | NOTION_API_KEY | Deal-tracking databases, sales playbook, objection-handling docs |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Query user profiles, subscription status, usage metrics, broker linkage |
 | Creem.io | CREEM_API_KEY | Generate checkout links per tier, verify payment status, manage subscriptions |

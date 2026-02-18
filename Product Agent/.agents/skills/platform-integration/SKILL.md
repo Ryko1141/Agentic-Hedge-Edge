@@ -1,4 +1,4 @@
-﻿---
+---
 name: platform-integration
 description: |
   Manages the technical and product aspects of integrating new trading platforms
@@ -127,7 +127,7 @@ Each platform integration follows a phased rollout:
 - Available to all subscribers on Pro and Enterprise tiers
 - Full feature parity with MT5 (or documented limitations)
 - Staged rollout using feature flags in Supabase
-- Sentry monitoring with platform-specific error grouping
+- console logging (console logging later) monitoring with platform-specific error grouping
 
 **Phase 4 - General Availability**:
 - Available to all tiers
@@ -182,17 +182,4 @@ For each new broker:
 - Notion API (NOTION_API_KEY): Integration specs, compatibility matrices, broker database, rollout tracking
 - Discord Bot (DISCORD_BOT_TOKEN): Platform-specific alpha testing threads, broker setup support, announcements
 - MetaTrader Manager API (MT_MANAGER_API_KEY, future): EA distribution, remote configuration for MT4/MT5 EAs
-- n8n (N8N_WEBHOOK_URL): Automated platform compatibility testing workflows
-
-## Quality Checks
-
-- [ ] Every platform integration has a written spec before development starts
-- [ ] Compatibility matrix is updated within 24 hours of any platform milestone change
-- [ ] Edge cases are documented with reproduction steps and solutions before phase 2 alpha
-- [ ] Latency benchmarks are established in phase 1 and validated in every subsequent phase
-- [ ] Failover behavior is tested: IPC disconnect, broker disconnect, token expiry during active hedge
-- [ ] Lot size normalization is validated across all supported broker/platform combinations
-- [ ] Symbol mapping covers at least the top 20 forex pairs and gold/silver
-- [ ] FIFO handling is tested on MT4 brokers that enforce it (documented list maintained)
-- [ ] Prop firm compliance layer is active for every platform, not just MT5
-- [ ] Broker onboarding checklist is completed before any broker goes to general availability
+- Local automation scripts deployed to Railway

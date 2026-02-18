@@ -1,4 +1,4 @@
-﻿---
+---
 name: feedback-collection
 description: |
   Systematically collects, categorizes, prioritizes, and routes user feedback from Discord conversations, surveys, support tickets, and community events to drive Hedge Edge product decisions and improve user satisfaction.
@@ -85,7 +85,7 @@ ull | Which agent owns the resolution |
   1. "On a scale of 0-10, how likely are you to recommend Hedge Edge to a fellow prop trader?" (NPS)
   2. "What's the ONE thing we could improve about your setup experience?" (Open text)
   3. "Which feature do you use most?" (Multiple choice: auto-hedge, dashboard monitoring, multi-account, broker connection)
-- Automation: n8n triggers DM 7 days after irst_trade stage in Supabase.
+- Automation: local automation scripts (Railway) triggers DM 7 days after irst_trade stage in Supabase.
 
 **B. Monthly Pulse Survey (All active users)**
 - Channel: Typeform link posted in Discord + DM to engaged users
@@ -190,7 +190,7 @@ This closes the loop and proves to users their voice matters  strongest retentio
 |---|---|---|
 | Discord Bot API | DISCORD_BOT_TOKEN | Message monitoring, reaction-based capture, DM surveys, feedback acknowledgment |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Feedback storage, categorization, deduplication, user-feedback linking, survey response storage |
-| n8n | N8N_WEBHOOK_URL | Survey trigger automation, weekly digest generation, feedback-to-product loop notifications |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Survey trigger automation, weekly digest generation, feedback-to-product loop notifications |
 | Notion API | NOTION_API_KEY | Weekly digest publishing, VoC report hosting, feedback database dashboard |
 | Typeform / Google Forms | FORM_API_KEY | Monthly pulse surveys, exit surveys, event feedback forms |
 | Discord Webhook | DISCORD_WEBHOOK_URL | Feature-shipped announcements, digest summaries in internal channels |

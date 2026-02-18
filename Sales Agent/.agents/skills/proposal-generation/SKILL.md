@@ -1,4 +1,4 @@
-﻿---
+---
 name: proposal-generation
 description: |
   Creates tailored sales proposals, tier recommendations, discount structures, and checkout
@@ -184,7 +184,7 @@ Structure:
 1. Send the proposal via email (formatted HTML) and Discord DM (condensed version with checkout link).
 2. Log the proposal in the CRM: tier recommended, pricing offered, discount applied, checkout link, delivery timestamp.
 3. Update Notion deal card to proposal_sent stage.
-4. Schedule follow-up reminders via n8n:
+4. Schedule follow-up reminders via local automation scripts (Railway):
    - 24 hours: "Just checking if you had any questions about the proposal."
    - 72 hours: "The {tier} plan we discussed would protect your  portfolio  ready to get started?"
    - 7 days (if no response): "I noticed you haven't activated yet. Would a quick call help? {calendly_link}"
@@ -234,9 +234,9 @@ proposal_output:
 | Google Sheets | GOOGLE_SHEETS_API_KEY | Log proposal details in CRM, read lead data |
 | Notion | NOTION_API_KEY | Update deal stage, attach proposal document to deal card |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Pull current subscription for upgrade proposals, verify user profile |
-| n8n | N8N_WEBHOOK_URL | Schedule follow-up reminder sequences, track checkout events |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Schedule follow-up reminder sequences, track checkout events |
 | Discord Bot | DISCORD_BOT_TOKEN | Send condensed proposal via DM |
-| Calendly | CALENDLY_API_KEY | Include scheduling link for prospects who want a closing call |
+| Cal.com | CAL_API_KEY | Include scheduling link for prospects who want a closing call |
 
 ## Quality Checks
 

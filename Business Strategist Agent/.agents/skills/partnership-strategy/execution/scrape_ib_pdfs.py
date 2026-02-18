@@ -15,10 +15,14 @@ Usage:
 """
 
 import argparse
+import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 try:
     import pdfplumber
@@ -266,12 +270,15 @@ The Business Strategist Agent references these when:
     
     print(f"\n=== Complete. {len(outputs)} agreement(s) scraped. ===")
     
-    return {
+    result = {
         "status": "success",
         "files_scraped": len(outputs),
         "outputs": [str(o) for o in outputs],
         "index": str(index_path),
     }
+    log_task("Business Strategist", f"IB PDF scraping: {len(outputs)} agreement(s)", "Done", "Medium", str(result)[:500])
+
+    return result
 
 
 if __name__ == "__main__":

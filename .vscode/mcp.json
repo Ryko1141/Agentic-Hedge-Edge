@@ -1,0 +1,12 @@
+{
+    "servers": {
+        "makenotion/notion-mcp-server": {
+            "command": "C:\\Users\\sossi\\AppData\\Roaming\\npm\\notion-mcp-server.cmd",
+            "args": [],
+            "env": {
+                "NOTION_TOKEN": "${env:NOTION_TOKEN}"
+            }
+        }
+    },
+    "inputs": []
+}

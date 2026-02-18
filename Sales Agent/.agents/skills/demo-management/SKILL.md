@@ -1,4 +1,4 @@
-﻿---
+---
 name: demo-management
 description: |
   Prepares and delivers tailored Hedge Edge product demonstrations for prop-firm traders.
@@ -112,7 +112,7 @@ demo_schedule:
    - Next step agreed (checkout, closing call, think-it-over period)
 3. Update the Notion deal card stage to demo_completed.
 4. If next step is a closing call, trigger the call-scheduling skill.
-5. If next step is a think-it-over period, schedule a 48-hour follow-up via n8n.
+5. If next step is a think-it-over period, schedule a 48-hour follow-up via local automation scripts (Railway).
 6. If the prospect was interested in the IB broker angle, flag for IB outreach with specific broker recommendation (Vantage for raw-spread preference, BlackBull for broader platform support).
 
 ### Step 4  Async Demo (type: sync_demo)
@@ -125,7 +125,7 @@ demo_schedule:
    - Drawdown breach simulation
 3. Embed the personalised ROI calculation as an overlay or closing slide.
 4. Send via email and Discord DM with a Creem.io checkout link.
-5. Track video open rate and link clicks via n8n.
+5. Track video open rate and link clicks via local automation scripts (Railway).
 
 ### Step 5  Upsell Walkthrough (type: upsell_walkthrough)
 
@@ -171,7 +171,7 @@ demo_output:
 | Creem.io | CREEM_API_KEY | Generate tier-specific checkout link for post-demo follow-up |
 | Zoom | ZOOM_API_KEY | Access recording after call for review |
 | Discord Bot | DISCORD_BOT_TOKEN | Send post-demo follow-up DM |
-| n8n | N8N_WEBHOOK_URL | Trigger follow-up sequences, async demo tracking |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Trigger follow-up sequences, async demo tracking |
 
 ## Quality Checks
 

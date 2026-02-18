@@ -15,6 +15,11 @@ import json
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 # ── Current State ─────────────────────────────────────────────────────────────
@@ -241,6 +246,8 @@ def main():
             print(f"\n{tier_name}: Optimal price = ${optimal['price_usd']:.2f} "
                   f"(revenue index: {optimal['revenue_index']:.3f})")
     
+    log_task("Business Strategist", f"Pricing optimization: {args.action}", "Done", "Medium", json.dumps(result, default=str)[:500])
+
     if args.output:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

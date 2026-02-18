@@ -1,4 +1,4 @@
-﻿---
+---
 name: user-onboarding
 description: |
   Manages the complete onboarding journey for new Hedge Edge users  from Discord join and app download through EA setup, broker linking, and first hedged trade activation. Optimizes time-to-value to under 30 minutes for setup and under 24 hours for first protected trade.
@@ -36,7 +36,7 @@ Convert every new Hedge Edge sign-up into an active hedger who completes their f
 
 ### 1. Welcome Sequence (Trigger: Discord Join)
 
-**Immediate (< 60 seconds via n8n webhook):**
+**Immediate (< 60 seconds via Railway-hosted automation script):**
 
 Send personalized Discord DM:
 
@@ -190,7 +190,7 @@ Update Supabase: completed stage when user has been active for 14+ days with at 
 | Welcome DM | Discord DM via bot | New user's Discord DM |
 | Onboarding stage update | JSON record | Supabase onboarding_tracking table |
 | Setup guidance messages | Discord message | #hedge-setup-help channel or DM |
-| Drop-off recovery DM | Discord DM via n8n workflow | User's Discord DM |
+| Drop-off recovery DM | Discord DM via Python/Node automation script | User's Discord DM |
 | Onboarding funnel report | Weekly Markdown summary | Notion Onboarding Analytics page |
 | Broker referral attribution | IB link tracking | Supabase eferrals table |
 
@@ -200,13 +200,13 @@ Update Supabase: completed stage when user has been active for 14+ days with at 
 |---|---|---|
 | Discord Bot API | DISCORD_BOT_TOKEN | Welcome DMs, role assignment, message sending, reaction monitoring |
 | Supabase | SUPABASE_URL, SUPABASE_KEY | Onboarding stage tracking, user profiles, broker attribution, funnel analytics |
-| n8n | N8N_WEBHOOK_URL | Welcome sequence triggers, drop-off recovery automation, stage transition webhooks |
+| local automation scripts (Railway) | RAILWAY_TOKEN | Welcome sequence triggers, drop-off recovery automation, stage transition webhooks |
 | Notion API | NOTION_API_KEY | Onboarding guides, FAQ content, funnel report publishing |
 | Discord Webhook | DISCORD_WEBHOOK_URL | Automated milestone announcements when users complete onboarding |
 
 ## Quality Checks
 
-- [ ] Welcome DM delivered within 60 seconds of Discord join (measure via n8n execution logs).
+- [ ] Welcome DM delivered within 60 seconds of Discord join (measure via local automation scripts (Railway) execution logs).
 - [ ] Median time from joined_discord to irst_trade is under 24 hours.
 - [ ] Onboarding completion rate (reach irst_trade stage) is above 40%.
 - [ ] Drop-off recovery DMs achieve > 15% re-engagement rate (user advances to next stage within 48 hours of recovery DM).

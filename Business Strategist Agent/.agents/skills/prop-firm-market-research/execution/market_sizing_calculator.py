@@ -13,6 +13,11 @@ Usage:
 import json
 import argparse
 from datetime import datetime, timezone
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+from shared.notion_client import add_row, log_task
 
 
 # ── Scenario Definitions ─────────────────────────────────────────────────────
@@ -221,6 +226,8 @@ def main():
         print(f"  Acquirable users (12mo): {output['user_funnel']['acquirable_12mo']:,}")
         print(f"  LTV (total): ${output['unit_economics']['ltv_total_usd']:,.2f}")
     
+    log_task("Business Strategist", f"Market sizing: {args.scenario}", "Done", "Medium", json.dumps(output, default=str)[:500])
+
     if args.output:
         from pathlib import Path
         output_path = Path(args.output)
