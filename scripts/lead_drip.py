@@ -56,6 +56,15 @@ SENDERS = {
 }
 DEFAULT_SENDER = SENDERS[1]
 REPLY_TO = "hedgeedge@outlook.com"
+
+# Disposable / spam email domains to skip during Supabase sync
+DISPOSABLE_DOMAINS = {
+    "deposin.com", "ruutukf.com", "guerrillamail.com", "mailinator.com",
+    "tempmail.com", "throwaway.email", "yopmail.com", "10minutemail.com",
+    "trashmail.com", "sharklasers.com", "guerrillamailblock.com",
+}
+# Internal / founder emails to exclude from drip pipeline
+INTERNAL_EMAILS = {"ryansossion@gmail.com", "rojipox157@deposin.com"}
 BATCH_SIZE = 50          # Max sends per email per run
 DAILY_CAP = 50           # Max total sends per day (warmup: 50 -> 100 -> 250 -> full)
 SEND_DELAY = 1.2         # Seconds between sends (Resend: 2 req/s limit)
@@ -546,6 +555,182 @@ This is an automated notification from Hedge Edge Lead Drip.
     except Exception as e:
         print(f"    Notification error: {e}")
 
+
+def sync_supabase_leads():
+    """Pull users from Supabase auth, add new ones to Notion leads_crm + Resend + state.
+
+    Dedup logic:
+      - Skip disposable/spam email domains
+      - Skip internal/founder emails
+      - Skip emails already in Notion leads_crm (any tag, not just Lead Drip)
+      - Skip emails already in local state
+      - For each new lead: add to Notion (tagged Lead Drip + Supabase Signup),
+        add to Resend audience, add to local state
+    """
+    print("\n  Syncing leads from Supabase...")
+    try:
+        from shared.supabase_client import get_supabase
+
+        sb = get_supabase(use_service_role=True)
+
+        # Step 1: Fetch all auth users (email + id + metadata)
+        users_resp = sb.auth.admin.list_users()
+        users = users_resp if isinstance(users_resp, list) else getattr(users_resp, "users", [])
+        if not users:
+            print("  No users in Supabase.")
+            return 0
+
+        # Step 2: Get profile names (user_id -> full_name)
+        profiles = sb.table("profiles").select("user_id, full_name").execute().data or []
+        uid_to_name = {p["user_id"]: p.get("full_name", "") for p in profiles}
+
+        # Step 3: Build candidate list
+        candidates = []
+        skipped_disposable = 0
+        skipped_internal = 0
+        for u in users:
+            email = getattr(u, "email", None) or (u.get("email") if isinstance(u, dict) else None)
+            uid = str(getattr(u, "id", None) or (u.get("id") if isinstance(u, dict) else ""))
+            if not email:
+                continue
+
+            email_lower = email.strip().lower()
+            domain = email_lower.split("@")[-1] if "@" in email_lower else ""
+
+            # Filter disposable domains
+            if domain in DISPOSABLE_DOMAINS:
+                skipped_disposable += 1
+                continue
+
+            # Filter internal/founder emails
+            if email_lower in INTERNAL_EMAILS:
+                skipped_internal += 1
+                continue
+
+            # Get name from profiles, fallback to user_metadata
+            name = uid_to_name.get(uid, "")
+            if not name:
+                meta = getattr(u, "user_metadata", None) or (u.get("user_metadata") if isinstance(u, dict) else {}) or {}
+                name = meta.get("full_name", "") or meta.get("name", "")
+
+            first_name = ""
+            last_name = ""
+            if name:
+                parts = name.strip().split(" ", 1)
+                first_name = parts[0]
+                last_name = parts[1] if len(parts) > 1 else ""
+
+            created = str(getattr(u, "created_at", None) or (u.get("created_at") if isinstance(u, dict) else ""))
+
+            candidates.append({
+                "email": email_lower,
+                "first_name": first_name,
+                "last_name": last_name,
+                "full_name": name.strip(),
+                "uid": uid,
+                "created_at": created[:10] if created else "",
+            })
+
+        if skipped_disposable:
+            print(f"    Skipped {skipped_disposable} disposable email(s)")
+        if skipped_internal:
+            print(f"    Skipped {skipped_internal} internal email(s)")
+        print(f"    {len(candidates)} Supabase users after filtering")
+
+        if not candidates:
+            return 0
+
+        # Step 4: Get ALL existing Notion leads_crm emails (full scan, not just Lead Drip tag)
+        from shared.notion_client import DATABASES, add_row
+        h = _notion_headers()
+        db_id = DATABASES.get("leads_crm")
+        existing_notion = set()
+        start_cursor = None
+        while True:
+            payload = {"page_size": 100}
+            if start_cursor:
+                payload["start_cursor"] = start_cursor
+            r = requests.post(
+                f"https://api.notion.com/v1/databases/{db_id}/query",
+                headers=h, json=payload, timeout=(5, 20),
+            )
+            data = r.json()
+            for page in data.get("results", []):
+                em = page.get("properties", {}).get("Email", {}).get("email")
+                if em:
+                    existing_notion.add(em.strip().lower())
+            if not data.get("has_more"):
+                break
+            start_cursor = data.get("next_cursor")
+            time.sleep(0.3)
+
+        # Step 5: Get existing local state emails
+        state = load_state()
+        existing_state = set(state.get("contacts", {}).keys())
+
+        # Step 6: Identify truly new leads
+        new_leads = [c for c in candidates if c["email"] not in existing_notion]
+        print(f"    {len(new_leads)} new leads (not in Notion)")
+
+        if not new_leads:
+            print("  All Supabase users already in pipeline.")
+            return 0
+
+        # Step 7: Add to Notion + Resend + state
+        added = 0
+        for lead in new_leads:
+            # Add to Notion leads_crm
+            try:
+                row = {
+                    "Name": lead["full_name"] or lead["first_name"] or lead["email"].split("@")[0],
+                    "Email": lead["email"],
+                    "First Name": lead["first_name"],
+                    "Last Name": lead["last_name"],
+                    "Source": "Supabase Signup",
+                    "Status": "New",
+                    "Tags": ["Lead Drip", "Supabase Signup"],
+                    "Wave": "Not Started",
+                }
+                if lead["created_at"]:
+                    row["Last Contact"] = lead["created_at"]
+                add_row("leads_crm", row)
+            except Exception as e:
+                print(f"    Notion add failed for {lead['email']}: {e}")
+                continue
+
+            # Add to Resend audience
+            try:
+                add_contact_to_audience(lead["email"], lead["first_name"], lead["last_name"])
+            except Exception:
+                pass  # Duplicate in Resend is fine
+
+            # Add to local state (if not already there)
+            if lead["email"] not in existing_state:
+                state["contacts"][lead["email"]] = {
+                    "name": lead["full_name"],
+                    "last_sent": 0,
+                    "sends": [],
+                }
+
+            added += 1
+            print(f"    + {lead['email']} ({lead['full_name'] or 'no name'})")
+            time.sleep(0.5)  # Rate limit
+
+        if added > 0:
+            save_state(state)
+        print(f"  Supabase sync: {added} new leads added to Notion + Resend + pipeline")
+        return added
+
+    except ImportError:
+        print("  Supabase package not installed, skipping Supabase sync.")
+        return 0
+    except Exception as e:
+        print(f"  Supabase sync error: {e}")
+        import traceback
+        traceback.print_exc()
+        return 0
+
+
 def sync_notion_leads():
     """Query Notion leads_crm for 'Lead Drip' tagged contacts and add any new ones to Resend + state."""
     print("\n  Syncing new leads from Notion...")
@@ -707,7 +892,10 @@ def run_drip():
     print(f"  {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 55)
     
-    # 0. Sync new leads from Notion leads_crm
+    # 0a. Sync new leads from Supabase users
+    sync_supabase_leads()
+
+    # 0b. Sync new leads from Notion leads_crm
     sync_notion_leads()
 
     # 1. Fetch contacts from Resend
@@ -979,7 +1167,7 @@ def reset_state():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Hedge Edge Lead Drip Automation")
     parser.add_argument("--action", required=True,
-                        choices=["run", "status", "preview", "import-csv", "reset", "sync-waves", "enrich"])
+                        choices=["run", "status", "preview", "import-csv", "reset", "sync-waves", "enrich", "sync-supabase"])
     parser.add_argument("--file", help="CSV file path for import-csv action")
     parser.add_argument("--batch-size", type=int, default=50,
                         help="Max sends per email per run (default: 50)")
@@ -1004,6 +1192,8 @@ if __name__ == "__main__":
         sync_all_waves()
     elif args.action == "enrich":
         enrich_notion_from_resend()
+    elif args.action == "sync-supabase":
+        sync_supabase_leads()
     elif args.action == "reset":
         reset_state()
     print()

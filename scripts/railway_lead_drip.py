@@ -5,6 +5,7 @@ Hedge Edge - Railway Cron: Lead Drip
 Railway entry point for the lead email drip automation.
 
 Flow per run:
+  0. Sync new leads from Supabase users (auto-import to Notion + Resend)
   1. Sync new leads from Notion leads_crm (auto-import)
   2. Send next batch of drip emails (with yesterday guard + dedup)
   3. Enrich Notion email_sends with Resend delivery data
@@ -18,7 +19,7 @@ Railway Config:
   - Health check: exit code 0 = success
 
 Environment Variables (set in Railway dashboard):
-  RESEND_API_KEY, NOTION_API_KEY
+  RESEND_API_KEY, NOTION_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 """
 
 import os
@@ -39,6 +40,10 @@ def main():
 
     # Validate env vars
     required = ["RESEND_API_KEY", "NOTION_API_KEY"]
+    # Supabase vars are optional (sync skips gracefully if missing)
+    optional_missing = [k for k in ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"] if not os.getenv(k)]
+    if optional_missing:
+        print("  Note: " + ", ".join(optional_missing) + " not set - Supabase sync will be skipped")
     missing = [k for k in required if not os.getenv(k)]
     if missing:
         print(f"Missing env vars: {', '.join(missing)}")
@@ -52,7 +57,8 @@ def main():
         lead_drip.BATCH_SIZE = 50
         print(f"  Warmup mode: BATCH_SIZE = {lead_drip.BATCH_SIZE}")
 
-        # Step 1+2: Sync Notion leads + send drip batch (with yesterday guard)
+        # Step 0+1+2: Sync Supabase + Notion leads + send drip batch
+        # (sync_supabase_leads() and sync_notion_leads() are called inside run_drip())
         lead_drip.run_drip()
 
         # Step 3: Enrich Notion with Resend delivery data
