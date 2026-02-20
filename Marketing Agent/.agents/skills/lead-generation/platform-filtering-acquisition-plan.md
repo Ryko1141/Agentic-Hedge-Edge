@@ -28,7 +28,7 @@
 |----------|--------------------|------------------|
 | **YouTube** | Comments on "I failed FTMO" videos, challenge failure compilations, "why I quit prop trading" content | Commenters expressing frustration, asking "how do I stop losing fees?", mentioning multiple failed attempts |
 | **Reddit** | r/Forex, r/PropFirm, r/FuturesTrading — failure threads, "is it worth it?" posts | Posts with keywords: "failed challenge", "lost $X on fees", "how many attempts", "FTMO failure", "can't pass phase 1" |
-| **Linkedin** | Connecting with "Prop firm employees" and scraping emails |
+| **Linkedin** | Connecting with "Prop firm employees" and scraping emails. I got denied payouts/lost a challenge linkedin post |
 | **Twitter/X** | FinTwit, prop firm hashtags (#FTMO #PropTrading #PassedOrFailed) | Tweets about failing, asking for tips, commenting on challenge results |
 | **Telegram** | SE Asian & Middle Eastern prop firm groups (English & local language) | Groups with 1K-50K members focused on prop challenges. Very active, high failure discussion volume |
 
@@ -56,7 +56,7 @@
 | Platform | Specific Locations | Filtering Signal |
 |----------|--------------------|------------------|
 | **YouTube** | "I passed FTMO" celebration videos, payout screenshot compilations, scaling plan discussions | Creators and commenters sharing success, payout amounts, discussing how to stay funded |
-| **Discord** | Funded-trader channels in prop firm Discord servers (#funded-chat, #payouts), exclusive funded trader communities | Members sharing payout screenshots, discussing drawdown management, scaling strategies |
+| **Linkedin** | Connecting with "Prop firm employees" and scraping emails. I got a payout linkedin post |
 | **Reddit** | r/Forex funded trader flair, r/PropFirm success posts, r/Daytrading | Posts with keywords: "got funded", "first payout", "scaling plan", "drawdown worried" |
 | **Twitter/X** | FinTwit funded trader community, payout screenshot shares | Tweets with FTMO certificates, payout receipts, "funded" in bio, 📊🏆 emoji patterns |
 | **Telegram** | Funded trader signal groups, premium trading channels | Smaller, curated groups (100-5K members) where members have active funded accounts |
@@ -140,10 +140,10 @@
 ## Acquisition Funnel (All Segments)
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌───────────────────┐
-│  PLATFORM TOUCH  │────▶│  LEAD MAGNET /   │────▶│  WAITLIST SIGNUP  │
-│  (organic/paid)  │     │  CONTENT HOOK    │     │  (Supabase)       │
-└─────────────────┘     └──────────────────┘     └───────────────────┘
+┌─────────────────┐     ┌──────────────────┐    ┌───────────────────┐
+│  PLATFORM TOUCH  │────│  LEAD MAGNET / │────▶│  WAITLIST SIGNUP │
+│  (organic/paid)  │    │  CONTENT HOOK    │    │  (Supabase)       │
+└─────────────────┘     └──────────────────┘    └───────────────────┘
                                                           │
                                                           ▼
                                               ┌───────────────────────┐

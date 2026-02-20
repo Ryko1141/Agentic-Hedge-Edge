@@ -1,9 +1,7 @@
 ---
 description: Orchestrator Agent for Hedge Edge. Master coordinator that routes tasks to specialist agents, decomposes complex multi-domain requests, manages cross-agent workflows, and ensures consistent high-quality output across the entire AI agent architecture.
 tools:
-  - context
-  - terminal
-  - codebase
+  [execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, search/codebase]
 ---
 
 # Orchestrator Agent

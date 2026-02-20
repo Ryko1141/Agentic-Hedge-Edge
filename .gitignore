@@ -34,3 +34,7 @@ npm-debug.log*
 
 # Script output files
 scripts/output/
+
+# Lead drip state (local runtime data)
+scripts/_lead_drip_state.json
+scripts/_lead_drip_cron.log

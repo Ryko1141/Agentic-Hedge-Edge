@@ -1,9 +1,7 @@
 ---
 description: Content Engine for Hedge Edge. Expert in multi-platform content strategy, video production, social media management, and educational content creation for the prop firm hedging space.
 tools:
-  - context
-  - terminal
-  - codebase
+  [execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, search/codebase]
 ---
 
 # Content Engine Agent
